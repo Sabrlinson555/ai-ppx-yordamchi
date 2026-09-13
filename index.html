@@ -59,6 +59,15 @@ placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko‘chada ikki fuq
 <button onclick="showStats()">
 📊 STATISTIKANI KO‘RISH
 </button>
+ <input
+type="date"
+id="dateFilter"
+style="width:100%;padding:13px;margin-top:10px;box-sizing:border-box;border:1px solid #bbb;border-radius:8px;font-size:16px"
+>
+
+<button onclick="filterByDate()">
+🔎 TANLANGAN SANA BO‘YICHA QIDIRISH
+</button>
  <button onclick="showDateStats()">
 📅 SANA BO‘YICHA STATISTIKA
  </button>
@@ -1225,6 +1234,63 @@ document.getElementById("stats").innerHTML=
 `;
 
 }
+ function filterByDate(){
+
+const selectedDate=
+document.getElementById("dateFilter").value;
+
+if(!selectedDate){
+alert("Avval sanani tanlang.");
+return;
+}
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+const results=reports.filter(function(report){
+
+if(!report.savedAt) return false;
+
+const parts=report.savedAt.split(",");
+
+const date=parts[0].trim();
+
+const selected=
+selectedDate.split("-").reverse().join(".");
+
+return date===selected;
+
+});
+
+if(results.length===0){
+
+document.getElementById("stats").innerHTML=
+"❌ Bu sanada qayd topilmadi.";
+
+return;
+}
+
+let html=
+`📅 <b>${results.length} ta qayd topildi</b><br><br>`;
+
+results.forEach(function(report){
+
+html+=`
+<div class="stat">
+🚨 <b>${report.type}</b><br>
+📍 ${report.place}<br>
+🕐 ${report.savedAt}<br>
+📝 ${report.text}
+</div>
+`;
+
+});
+
+document.getElementById("stats").innerHTML=html;
+
+ }
 </script>
 
 </body>
