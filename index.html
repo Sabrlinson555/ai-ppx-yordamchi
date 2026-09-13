@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>PPX Yordamchi</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
 body{
@@ -12,14 +16,17 @@ background:#eef2f5;
 margin:0;
 padding:20px
 }
+
 .container{
 max-width:700px;
 margin:auto
 }
+
 h1{
 text-align:center;
 color:#123b5d
 }
+
 .card{
 background:white;
 padding:18px;
@@ -27,6 +34,7 @@ margin-top:15px;
 border-radius:12px;
 box-shadow:0 2px 8px #0002
 }
+
 textarea{
 width:100%;
 height:150px;
@@ -36,6 +44,7 @@ border:1px solid #bbb;
 border-radius:8px;
 font-size:16px
 }
+
 button{
 width:100%;
 padding:13px;
@@ -46,6 +55,7 @@ background:#123b5d;
 color:white;
 font-size:16px
 }
+
 .result{
 background:#f4f7f9;
 padding:12px;
@@ -53,6 +63,7 @@ border-radius:8px;
 margin-top:10px;
 white-space:pre-line
 }
+
 .stat{
 display:flex;
 justify-content:space-between;
@@ -61,34 +72,33 @@ margin-top:8px;
 background:#f1f5f8;
 border-radius:8px
 }
+
 .big{
 font-size:30px;
 font-weight:bold;
 color:#123b5d;
 text-align:center
 }
+
 .alert{
 padding:14px;
 margin-top:10px;
 border-radius:8px;
 background:#fff3cd
 }
+
 .success{
 padding:14px;
 margin-top:10px;
 border-radius:8px;
 background:#d1e7dd
 }
-.mapbox{
-background:#e7eef3;
-padding:20px;
+
+#map{
+height:400px;
+width:100%;
 border-radius:10px;
-text-align:center;
-margin-top:10px
-}
-.pin{
-font-size:35px;
-margin:10px
+margin-top:12px
 }
 </style>
 </head>
@@ -100,16 +110,23 @@ margin:10px
 <h1>🛡️ PPX YORDAMCHI</h1>
 
 <div class="card">
+
 <h3>📝 Voqea ma'lumotini kiriting</h3>
 
 <textarea id="text"
 placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko‘chada ikki fuqaro janjallashayotgan edi. Xodimlar yetib borib, fuqarolarni ajratdi va tushuntirish berdi."></textarea>
 
-<button onclick="voiceInput()">🎙️ OVOZ ORQALI KIRITISH</button>
+<button onclick="voiceInput()">
+🎙️ OVOZ ORQALI KIRITISH
+</button>
 
-<button onclick="analyze()">🤖 AI TAHLIL QILISH</button>
+<button onclick="analyze()">
+🤖 AI TAHLIL QILISH
+</button>
 
-<button onclick="control()">🛡️ AI NAZORAT</button>
+<button onclick="control()">
+🛡️ AI NAZORAT
+</button>
 
 </div>
 
@@ -146,45 +163,51 @@ Hozircha statistika yo‘q.
 
 <div class="card">
 
-<h3>🗺️ HODISALAR XARITASI</h3>
-
-<div class="mapbox">
-
-<div class="pin">📍</div>
-
-<b>PPX hodisalari joylashuvi</b>
-
-<p id="mapInfo">
-Hozircha xaritada hodisalar yo‘q.
-</p>
-
-</div>
+<h3>🗺️ HAQIQIY HODISALAR XARITASI</h3>
 
 <button onclick="showMap()">
-🗺️ XARITANI KO‘RISH
+🗺️ XARITANI OCHISH
 </button>
 
+<div id="map"></div>
+
+<div id="mapInfo" class="result">
+Xaritani ochish uchun tugmani bosing.
 </div>
 
 </div>
+
+</div>
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
 
 
 <script>
 
+let map=null;
+
+
+/* OVOZ */
+
 function voiceInput(){
 
-const SpeechRecognition =
-window.SpeechRecognition ||
+const SpeechRecognition=
+window.SpeechRecognition||
 window.webkitSpeechRecognition;
 
 if(!SpeechRecognition){
 
-alert("Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi.");
+alert(
+"Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi."
+);
 
 return;
 }
 
-const recognition = new SpeechRecognition();
+const recognition=new SpeechRecognition();
 
 recognition.lang="uz-UZ";
 recognition.interimResults=false;
@@ -220,41 +243,43 @@ recognition.start();
 }
 
 
+/* HODISA TURI */
+
 function detectType(text){
 
 text=text.toLowerCase();
 
 if(
-text.includes("janjal") ||
-text.includes("urush") ||
+text.includes("janjal")||
+text.includes("urush")||
 text.includes("mushtlash")
 )
 return "Janjal";
 
 if(
-text.includes("o‘g‘ri") ||
-text.includes("o'g'ri") ||
-text.includes("o‘g‘rilik") ||
+text.includes("o‘g‘ri")||
+text.includes("o'g'ri")||
+text.includes("o‘g‘rilik")||
 text.includes("o'g'rilik")
 )
 return "O‘g‘rilik";
 
 if(
-text.includes("avariya") ||
-text.includes("yth") ||
-text.includes("yo‘l-transport") ||
+text.includes("avariya")||
+text.includes("yth")||
+text.includes("yo‘l-transport")||
 text.includes("yo'l-transport")
 )
 return "Yo‘l-transport hodisasi";
 
 if(
-text.includes("mast") ||
+text.includes("mast")||
 text.includes("spirtli")
 )
 return "Mast holat";
 
 if(
-text.includes("bezorilik") ||
+text.includes("bezorilik")||
 text.includes("bezori")
 )
 return "Bezorilik";
@@ -263,6 +288,8 @@ return "Boshqa hodisa";
 
 }
 
+
+/* JOY */
 
 function detectPlace(text){
 
@@ -292,6 +319,8 @@ return "Noma'lum joy";
 }
 
 
+/* AI TAHLIL */
+
 function analyze(){
 
 const text=
@@ -299,7 +328,9 @@ document.getElementById("text").value.trim();
 
 if(!text){
 
-alert("Avval voqea haqida ma'lumot kiriting.");
+alert(
+"Avval voqea haqida ma'lumot kiriting."
+);
 
 return;
 }
@@ -316,13 +347,15 @@ if(dateMatch)
 date=dateMatch[0];
 
 const timeMatch=
-text.match(/soat\s*(\d{1,2}[:.]\d{2})/i);
+text.match(
+/soat\s*(\d{1,2}[:.]\d{2})/i
+);
 
 if(timeMatch)
-time=timeMatch[1].replace(".",":");
+time=
+timeMatch[1].replace(".",":");
 
 const type=detectType(text);
-
 const place=detectPlace(text);
 
 document.getElementById("result").innerText=
@@ -341,6 +374,8 @@ ${text}`;
 }
 
 
+/* NAZORAT */
+
 function control(){
 
 const text=
@@ -348,7 +383,9 @@ document.getElementById("text").value.trim();
 
 if(!text){
 
-alert("Avval ma'lumot kiriting.");
+alert(
+"Avval ma'lumot kiriting."
+);
 
 return;
 }
@@ -358,18 +395,24 @@ let warnings=[];
 if(
 !/soat\s*\d{1,2}[:.]\d{2}/i.test(text)
 )
-warnings.push("⏰ Vaqt aniq ko‘rsatilmagan.");
+warnings.push(
+"⏰ Vaqt aniq ko‘rsatilmagan."
+);
 
 if(
 detectPlace(text)==="Noma'lum joy"
 )
-warnings.push("📍 Hodisa joyi aniq ko‘rsatilmagan.");
+warnings.push(
+"📍 Hodisa joyi aniq ko‘rsatilmagan."
+);
 
 if(
 !text.toLowerCase().includes("xodim") &&
 !text.toLowerCase().includes("patrul")
 )
-warnings.push("👮 Xodimning harakati ko‘rsatilmagan.");
+warnings.push(
+"👮 Xodimning harakati ko‘rsatilmagan."
+);
 
 if(warnings.length===0){
 
@@ -412,6 +455,8 @@ ${warnings.join("<br>")}
 }
 
 
+/* QAYDNI GPS BILAN SAQLASH */
+
 function addReport(){
 
 const text=
@@ -419,14 +464,35 @@ document.getElementById("text").value.trim();
 
 if(!text){
 
-alert("Avval voqea ma'lumotini kiriting.");
+alert(
+"Avval voqea ma'lumotini kiriting."
+);
 
 return;
 }
 
+if(!navigator.geolocation){
+
+alert(
+"Telefoningiz GPS funksiyasini qo‘llab-quvvatlamaydi."
+);
+
+return;
+}
+
+document.getElementById("result").innerText=
+"📍 GPS orqali joylashuv aniqlanmoqda...";
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+const lat=position.coords.latitude;
+const lon=position.coords.longitude;
+
 let reports=
 JSON.parse(
-localStorage.getItem("ppxReports") || "[]"
+localStorage.getItem("ppxReports")||"[]"
 );
 
 reports.push({
@@ -437,6 +503,10 @@ type:detectType(text),
 
 place:detectPlace(text),
 
+lat:lat,
+
+lon:lon,
+
 savedAt:new Date().toLocaleString("uz-UZ")
 
 });
@@ -446,18 +516,57 @@ localStorage.setItem(
 JSON.stringify(reports)
 );
 
-alert("✅ Qayd statistika bazasiga qo‘shildi.");
+document.getElementById("result").innerHTML=
 
-showStats();
+`<div class="success">
+
+✅ <b>Qayd saqlandi!</b>
+
+<br><br>
+
+📍 GPS joylashuvi ham saqlandi.
+
+</div>`;
+
+showMap();
+
+},
+
+function(){
+
+document.getElementById("result").innerHTML=
+
+`<div class="alert">
+
+❌ GPS joylashuvini aniqlab bo‘lmadi.
+
+<br><br>
+
+Telefoningizda joylashuv xizmatini yoqing
+va brauzerga joylashuvga ruxsat bering.
+
+</div>`;
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:10000,
+maximumAge:0
+}
+
+);
 
 }
 
+
+/* STATISTIKA */
 
 function showStats(){
 
 let reports=
 JSON.parse(
-localStorage.getItem("ppxReports") || "[]"
+localStorage.getItem("ppxReports")||"[]"
 );
 
 if(reports.length===0){
@@ -466,7 +575,6 @@ document.getElementById("stats").innerHTML=
 "Hozircha statistika yo‘q.";
 
 return;
-
 }
 
 let types={};
@@ -476,10 +584,10 @@ let times={};
 reports.forEach(report=>{
 
 const type=
-report.type || detectType(report.text);
+report.type||detectType(report.text);
 
 const place=
-report.place || detectPlace(report.text);
+report.place||detectPlace(report.text);
 
 types[type]=(types[type]||0)+1;
 
@@ -544,7 +652,6 @@ Object.keys(types).forEach(type=>{
 if(types[type]>maxType){
 
 maxType=types[type];
-
 mostCommon=type;
 
 }
@@ -560,7 +667,6 @@ Object.keys(places).forEach(place=>{
 if(places[place]>maxPlace){
 
 maxPlace=places[place];
-
 mostCommonPlace=place;
 
 }
@@ -590,9 +696,11 @@ document.getElementById("stats").innerHTML=
 
 `
 
-<div class="big">${reports.length}</div>
+<div class="big">
+${reports.length}
+</div>
 
-<p style="text-align:center;">
+<p style="text-align:center">
 Jami qaydlar
 </p>
 
@@ -636,78 +744,127 @@ ${placeHTML}
 
 </div>
 
-<p>
-⚠️ Ushbu statistika demo ma'lumotlar asosida ishlaydi.
-</p>
-
 `;
 
 }
 
+
+/* HAQIQIY XARITA */
 
 function showMap(){
 
 let reports=
 JSON.parse(
-localStorage.getItem("ppxReports") || "[]"
+localStorage.getItem("ppxReports")||"[]"
 );
 
-if(reports.length===0){
+if(!map){
 
-document.getElementById("mapInfo").innerHTML=
-"⚠️ Avval kamida bitta hodisani statistikaga qo‘shing.";
+map=L.map("map").setView(
+[41.3111,69.2797],
+11
+);
 
-return;
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+maxZoom:19,
+attribution:
+'© OpenStreetMap'
+}
+).addTo(map);
 
 }
 
-let places={};
+let gpsReports=
+reports.filter(
+report=>
+report.lat!==undefined &&
+report.lon!==undefined
+);
 
-reports.forEach(report=>{
+if(gpsReports.length===0){
 
-const place=
-report.place || detectPlace(report.text);
+document.getElementById("mapInfo").innerHTML=
+"📍 GPS koordinatali yangi qaydlar hali yo‘q.";
 
-places[place]=(places[place]||0)+1;
+setTimeout(function(){
+map.invalidateSize();
+},300);
+
+return;
+}
+
+
+map.eachLayer(function(layer){
+
+if(
+layer instanceof L.Marker
+)
+map.removeLayer(layer);
 
 });
 
 
-let html="";
+let bounds=[];
 
-Object.keys(places).forEach(place=>{
+gpsReports.forEach(function(report){
 
-html+=`
+const marker=
+L.marker(
+[
+report.lat,
+report.lon
+]
+).addTo(map);
 
-<div class="stat">
+marker.bindPopup(
 
-<span>📍 ${place}</span>
+`<b>🚨 ${report.type}</b>
+<br>
+📍 ${report.place}
+<br>
+🕐 ${report.savedAt}
+<br><br>
+${report.text}`
 
-<b>${places[place]} ta hodisa</b>
+);
 
-</div>
-
-`;
+bounds.push(
+[
+report.lat,
+report.lon
+]
+);
 
 });
+
+
+if(bounds.length===1){
+
+map.setView(
+bounds[0],
+16
+);
+
+}else{
+
+map.fitBounds(bounds,{
+padding:[30,30]
+});
+
+}
 
 
 document.getElementById("mapInfo").innerHTML=
 
-`
+`📍 Xaritada <b>${gpsReports.length}</b> ta GPS qayd ko‘rsatilmoqda.`;
 
-<p>
-📊 Jami ${reports.length} ta hodisa qayd etilgan.
-</p>
+setTimeout(function(){
 
-${html}
+map.invalidateSize();
 
-<p>
-⚠️ Hozircha bu demo xarita.
-Haqiqiy xarita uchun GPS koordinatalari kerak.
-</p>
-
-`;
+},300);
 
 }
 
