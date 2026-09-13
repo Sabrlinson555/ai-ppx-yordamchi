@@ -946,6 +946,13 @@ marker.bindPopup(`
 <br><br>
 
 📝 ${report.text}
+<br><br>
+
+🛡️ <b>Xavflilik:</b> ${report.risk || detectRisk(report.text)}
+
+<br>
+
+🚨 <b>Prioritet:</b> ${getPriority(report.risk || detectRisk(report.text))}
 
 `);
 
