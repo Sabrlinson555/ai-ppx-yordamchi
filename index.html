@@ -67,6 +67,9 @@ style="width:100%;padding:13px;margin-top:10px;box-sizing:border-box;border:1px 
  <button onclick="showPeriodStats()">
 📈 HAFTA / OY STATISTIKASI
  </button>
+ <button onclick="showDayStats()">
+📅 KUNLAR BO‘YICHA STATISTIKA
+ </button>
 
 <button onclick="filterByDate()">
 🔎 TANLANGAN SANA BO‘YICHA QIDIRISH
@@ -836,6 +839,68 @@ ${monthCount} ta
 📊 <b>Jami:</b>
 ${reports.length} ta
 `;
+
+}
+ function showDayStats(){
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+const days=[
+"Dushanba",
+"Seshanba",
+"Chorshanba",
+"Payshanba",
+"Juma",
+"Shanba",
+"Yakshanba"
+];
+
+const counts=[
+0,0,0,0,0,0,0
+];
+
+reports.forEach(function(report){
+
+const savedAt=report.savedAt||"";
+
+const m=savedAt.match(
+/(\d{1,2})[./](\d{1,2})[./](\d{4})/
+);
+
+if(!m) return;
+
+const date=new Date(
+Number(m[3]),
+Number(m[2])-1,
+Number(m[1])
+);
+
+let day=date.getDay();
+
+day=(day+6)%7;
+
+counts[day]++;
+
+});
+
+let html=
+`📅 <b>KUNLAR BO‘YICHA STATISTIKA</b><br><br>`;
+
+days.forEach(function(day,index){
+
+html+=`
+<div class="stat">
+📌 ${day}
+<b>${counts[index]} ta</b>
+</div>
+`;
+
+});
+
+document.getElementById("stats").innerHTML=html;
 
 }
 
