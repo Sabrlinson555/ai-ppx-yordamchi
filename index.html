@@ -1258,15 +1258,27 @@ const selectedYear=selected[0];
 
 const results=reports.filter(function(report){
 
-if(!report.savedAt) return false;
+if(!report.text) return false;
 
-const savedDate=report.savedAt.split(",")[0].trim();
+const text=report.text.toLowerCase();
 
-return (
-savedDate.includes(selectedDay) &&
-savedDate.includes(selectedMonth) &&
-savedDate.includes(selectedYear)
+const datePattern=
+selectedDay+" "+(
+selectedMonth==="01"?"yanvar":
+selectedMonth==="02"?"fevral":
+selectedMonth==="03"?"mart":
+selectedMonth==="04"?"aprel":
+selectedMonth==="05"?"may":
+selectedMonth==="06"?"iyun":
+selectedMonth==="07"?"iyul":
+selectedMonth==="08"?"avgust":
+selectedMonth==="09"?"sentabr":
+selectedMonth==="10"?"oktabr":
+selectedMonth==="11"?"noyabr":
+"dekabr"
 );
+
+return text.includes(datePattern);
 
 });
 
