@@ -71,7 +71,7 @@ Hozircha statistika yo‘q.
 <h3>📄 AVTOMATIK XIZMAT HISOBOTI</h3>
 
 <button onclick="generateReport()">📄 HISOBOTNI TAYYORLASH</button>
-
+<button onclick="printReport()">🖨️ HISOBOTNI CHOP ETISH / PDF</button>
 <div id="serviceReport" class="result">
 Hisobot hali tayyorlanmagan.
 </div>
@@ -945,7 +945,7 @@ ${text}
 👮 Xodimlar harakati:
 Qayd matnida ko‘rsatilgan ma’lumotlar asosida.`;
 }
- <button onclick="printReport()">🖨️ HISOBOTNI CHOP ETISH / PDF</button>
+ 
 function printReport(){
 const report=document.getElementById("serviceReport").innerText;
 
