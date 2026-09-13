@@ -1181,30 +1181,35 @@ localStorage.getItem("ppxReports")||"[]"
 );
 
 if(reports.length===0){
+
 document.getElementById("stats").innerHTML=
 "📅 Hozircha qaydlar yo‘q.";
+
 return;
 }
 
-const today=new Date();
-
-const todayText=
-today.toLocaleDateString("uz-UZ");
+const today=
+new Date().toLocaleDateString("uz-UZ");
 
 let todayCount=0;
 
 reports.forEach(function(report){
 
-const reportDate=
+if(report.savedAt){
+
+const savedDate=
 report.savedAt.split(",")[0].trim();
 
-if(reportDate===todayText){
+if(savedDate===today){
 todayCount++;
+}
+
 }
 
 });
 
 document.getElementById("stats").innerHTML=
+
 `
 📅 <b>SANA BO‘YICHA STATISTIKA</b>
 
@@ -1219,7 +1224,7 @@ document.getElementById("stats").innerHTML=
 <b>${reports.length} ta</b>
 `;
 
- }
+}
 </script>
 
 </body>
