@@ -59,6 +59,9 @@ placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko‘chada ikki fuq
 <button onclick="showStats()">
 📊 STATISTIKANI KO‘RISH
 </button>
+ <button onclick="showDateStats()">
+📅 SANA BO‘YICHA STATISTIKA
+ </button>
  <button onclick="exportCSV()">
 📥 EXCEL / CSV GA CHIQARISH
 </button>
@@ -1168,6 +1171,53 @@ link.download="ppx_qaydlar.csv";
 link.click();
 
 URL.revokeObjectURL(url);
+
+ }
+ function showDateStats(){
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+if(reports.length===0){
+document.getElementById("stats").innerHTML=
+"📅 Hozircha qaydlar yo‘q.";
+return;
+}
+
+const today=new Date();
+
+const todayText=
+today.toLocaleDateString("uz-UZ");
+
+let todayCount=0;
+
+reports.forEach(function(report){
+
+const reportDate=
+report.savedAt.split(",")[0].trim();
+
+if(reportDate===todayText){
+todayCount++;
+}
+
+});
+
+document.getElementById("stats").innerHTML=
+`
+📅 <b>SANA BO‘YICHA STATISTIKA</b>
+
+<br><br>
+
+📌 Bugungi qaydlar:
+<b>${todayCount} ta</b>
+
+<br><br>
+
+📊 Jami qaydlar:
+<b>${reports.length} ta</b>
+`;
 
  }
 </script>
