@@ -270,6 +270,17 @@ return "⚠️ Vaziyatni nazoratga olish va qo‘shimcha kuzatuv tavsiya etiladi
 return "🟢 Oddiy nazorat va vaziyatni kuzatish tavsiya etiladi.";
 
  }
+ function getPriority(risk){
+
+if(risk==="🔴 YUQORI XAVF")
+return "🚨 SHOSHILINCH";
+
+if(risk==="🟠 O‘RTA XAVF")
+return "⚠️ MUHIM";
+
+return "🟢 ODATIY";
+
+ }
 
 
 /* JOY */
@@ -486,9 +497,14 @@ document.getElementById("result").innerHTML=
 <br><br>
 
 🛡️ <b>Xavflilik:</b> ${detectRisk(text)}
+
 <br><br>
 
 💡 <b>Tavsiya:</b> ${getRecommendation(detectRisk(text))}
+
+<br><br>
+
+🚨 <b>Prioritet:</b> ${getPriority(detectRisk(text))}
 
 </div>`;
 
