@@ -3,59 +3,127 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI PPX Yordamchi</title>
+<title>PPX Yordamchi</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f2f4f7;color:#172033}
-header{background:#172033;color:white;padding:22px 15px;text-align:center}
-header h1{margin:0;font-size:25px}
-header p{margin:8px 0 0;opacity:.8}
-.container{max-width:700px;margin:25px auto;padding:15px}
-.card{background:white;border-radius:15px;padding:20px;margin-bottom:18px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
-textarea{width:100%;min-height:160px;padding:15px;border:1px solid #ccd2dc;border-radius:10px;font-size:16px}
-button{width:100%;padding:15px;margin-top:12px;border:0;border-radius:10px;background:#172033;color:white;font-size:16px;font-weight:bold}
-.voice{background:#315c9b}
-.check{background:#56616f}
-.result{background:#f7f8fa;border-left:4px solid #172033;padding:15px;border-radius:8px;line-height:1.6;white-space:pre-line}
-.good{background:#e7f7ec;padding:12px;border-radius:8px;margin-top:12px}
-.bad{background:#fff4d6;padding:12px;border-radius:8px;margin-top:12px}
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #123b5d;
+}
+
+.card {
+    background: white;
+    padding: 18px;
+    margin-top: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0002;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #123b5d;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0b2c46;
+}
+
+.result {
+    background: #f4f7f9;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    white-space: pre-line;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    margin-top: 8px;
+    background: #f1f5f8;
+    border-radius: 8px;
+}
+
+.big {
+    font-size: 28px;
+    font-weight: bold;
+    color: #123b5d;
+    text-align: center;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>🤖 AI PPX YORDAMCHI</h1>
-<p>PPX xodimi uchun xizmat qaydlarini tartiblashtirish</p>
-</header>
-
 <div class="container">
 
+<h1>🛡️ PPX YORDAMCHI</h1>
+
 <div class="card">
-<h2>📝 Xizmat qaydi</h2>
 
-<textarea id="inputText"
-placeholder="Holatni yozing yoki ovoz orqali kiriting..."></textarea>
+<h3>📝 Voqea ma'lumotini kiriting</h3>
 
-<button class="voice" onclick="startVoice()">
-🎙️ OVOZ ORQALI KIRITISH
-</button>
+<textarea id="text"
+placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko‘chada ikki fuqaro janjallashayotgan edi. Xodimlar yetib borib, fuqarolarni ajratdi va tushuntirish berdi."></textarea>
 
-<button onclick="analyze()">
-🤖 AI TAHLIL QILISH
-</button>
+<button onclick="voiceInput()">🎙️ OVOZ ORQALI KIRITISH</button>
 
-<button class="check" onclick="checkReport()">
-🛡️ AI NAZORAT
-</button>
+<button onclick="analyze()">🤖 AI TAHLIL QILISH</button>
+
+<button onclick="control()">🛡️ AI NAZORAT</button>
+
 </div>
 
 <div class="card">
-<h2>📋 Natija</h2>
+
+<h3>📋 AI TAHLIL NATIJASI</h3>
 
 <div id="result" class="result">
-Ma'lumot kiritilgandan keyin natija shu yerda chiqadi.
+Hozircha ma'lumot yo‘q.
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>📊 AI TAHLIL / STATISTIKA</h3>
+
+<button onclick="addReport()">➕ QAYDNI STATISTIKAGA QO‘SHISH</button>
+
+<button onclick="showStats()">📊 STATISTIKANI KO‘RISH</button>
+
+<div id="stats" class="result">
+Hozircha statistika yo‘q.
 </div>
 
 </div>
@@ -64,168 +132,326 @@ Ma'lumot kiritilgandan keyin natija shu yerda chiqadi.
 
 <script>
 
-function startVoice(){
+function voiceInput() {
 
-const SpeechRecognition =
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
-if(!SpeechRecognition){
-alert("Bu brauzer ovozli kiritishni qo‘llab-quvvatlamaydi.");
-return;
+    if (!SpeechRecognition) {
+        alert("Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "uz-UZ";
+    recognition.interimResults = false;
+
+    recognition.onstart = function() {
+        document.getElementById("result").innerText =
+            "🎙️ Tinglayapman...";
+    };
+
+    recognition.onresult = function(event) {
+
+        const text =
+            event.results[0][0].transcript;
+
+        document.getElementById("text").value = text;
+
+        document.getElementById("result").innerText =
+            "✅ Ovoz matnga aylantirildi.";
+    };
+
+    recognition.onerror = function() {
+
+        document.getElementById("result").innerText =
+            "❌ Ovozli kiritishda xatolik yuz berdi.";
+    };
+
+    recognition.start();
 }
 
-const recognition=new SpeechRecognition();
 
-recognition.lang="uz-UZ";
-recognition.continuous=false;
-recognition.interimResults=false;
+function analyze() {
 
-recognition.onstart=function(){
-document.getElementById("result").innerText=
-"🎙️ Tinglayapman... Gapiring.";
-};
+    const text =
+        document.getElementById("text").value.trim();
 
-recognition.onresult=function(event){
+    if (!text) {
+        alert("Avval voqea haqida ma'lumot kiriting.");
+        return;
+    }
 
-const text=event.results[0][0].transcript;
+    let date = "Aniqlanmadi";
+    let time = "Aniqlanmadi";
+    let place = "Aniqlanmadi";
+    let type = "Boshqa hodisa";
 
-document.getElementById("inputText").value=text;
+    const dateMatch =
+        text.match(/(\d{1,2})[-\s](sentabr|sentyabr|oktabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul|avgust)/i);
 
-document.getElementById("result").innerText=
-"✅ Ovoz matnga aylantirildi.\n\n"+
-"Endi «AI TAHLIL QILISH» yoki «AI NAZORAT» tugmasini bosing.";
-};
+    if (dateMatch) {
+        date = dateMatch[0];
+    }
 
-recognition.onerror=function(){
-document.getElementById("result").innerText=
-"⚠️ Ovoz kiritishda xatolik yuz berdi.";
-};
+    const timeMatch =
+        text.match(/soat\s*(\d{1,2}[:.]\d{2})/i);
 
-recognition.start();
-}
+    if (timeMatch) {
+        time = timeMatch[1].replace(".", ":");
+    }
 
+    const places = [
+        "ko‘cha",
+        "ko'cha",
+        "mahalla",
+        "bozor",
+        "bekat",
+        "uy",
+        "maktab",
+        "do‘kon",
+        "do'kon",
+        "park"
+    ];
 
-function analyze(){
+    for (let p of places) {
+        if (text.toLowerCase().includes(p)) {
+            place = p;
+            break;
+        }
+    }
 
-const text=document.getElementById("inputText").value.trim();
-const result=document.getElementById("result");
+    if (
+        text.toLowerCase().includes("janjal") ||
+        text.toLowerCase().includes("urush")
+    ) {
+        type = "Janjal";
+    }
+    else if (
+        text.toLowerCase().includes("o‘g‘ri") ||
+        text.toLowerCase().includes("o'g'ri") ||
+        text.toLowerCase().includes("o‘g‘rilik")
+    ) {
+        type = "O‘g‘rilik";
+    }
+    else if (
+        text.toLowerCase().includes("avariya") ||
+        text.toLowerCase().includes("yo‘l-transport")
+    ) {
+        type = "Yo‘l-transport hodisasi";
+    }
+    else if (
+        text.toLowerCase().includes("mast")
+    ) {
+        type = "Mast holat";
+    }
 
-if(!text){
-result.innerText="⚠️ Avval xizmat holatini yozing.";
-return;
-}
-
-const lower=text.toLowerCase();
-
-let date="KO‘RSATILMAGAN";
-let time="KO‘RSATILMAGAN";
-let place="KO‘RSATILMAGAN";
-let eventType="Boshqa holat";
-
-const dateMatch=text.match(/\b\d{1,2}[-./]\w+/i);
-if(dateMatch) date=dateMatch[0];
-
-const timeMatch=text.match(/\b\d{1,2}[:.]\d{2}\b/);
-if(timeMatch) time=timeMatch[0];
-
-if(lower.includes("ko‘chada")||lower.includes("ko'chada"))
-place="Ko‘cha hududi";
-else if(lower.includes("mahallada")||lower.includes("mahallasida"))
-place="Mahalla hududi";
-else if(lower.includes("bozorda")||lower.includes("bozorida"))
-place="Bozor hududi";
-else if(lower.includes("uyda")||lower.includes("xonadonda"))
-place="Xonadon";
-
-if(lower.includes("janjal")||lower.includes("urush")||lower.includes("mushtlash"))
-eventType="Janjal / tartibbuzarlik";
-else if(lower.includes("avariya")||lower.includes("yo‘l")||lower.includes("yo'l"))
-eventType="Yo‘l-transport holati";
-else if(lower.includes("o‘g‘irlik")||lower.includes("o'g'irlik"))
-eventType="O‘g‘irlik holati";
-else if(lower.includes("bezorilik"))
-eventType="Bezorilik holati";
-
-result.innerText=
+    const result =
 `📅 Sana: ${date}
-
-🕐 Vaqt: ${time}
-
+⏰ Vaqt: ${time}
 📍 Joy: ${place}
+🚨 Hodisa turi: ${type}
 
-⚠️ Holat turi: ${eventType}
+📝 Qayd:
+${text}`;
 
-📝 Xodim tomonidan qayd:
-
-${text}
-
-✅ Dastlabki qayd shakllantirildi.`;
+    document.getElementById("result").innerText = result;
 }
 
 
-function checkReport(){
+function control() {
 
-const text=document.getElementById("inputText").value.trim();
-const result=document.getElementById("result");
+    const text =
+        document.getElementById("text").value.trim();
 
-if(!text){
-result.innerText="⚠️ Avval xizmat holatini kiriting.";
-return;
+    if (!text) {
+        alert("Avval ma'lumot kiriting.");
+        return;
+    }
+
+    let warnings = [];
+
+    if (!/soat\s*\d{1,2}[:.]\d{2}/i.test(text)) {
+        warnings.push("⏰ Vaqt aniq ko‘rsatilmagan.");
+    }
+
+    if (
+        !text.toLowerCase().includes("ko‘cha") &&
+        !text.toLowerCase().includes("ko'cha") &&
+        !text.toLowerCase().includes("mahalla") &&
+        !text.toLowerCase().includes("bozor") &&
+        !text.toLowerCase().includes("bekat")
+    ) {
+        warnings.push("📍 Hodisa joyi aniq ko‘rsatilmagan.");
+    }
+
+    if (
+        !text.toLowerCase().includes("xodim") &&
+        !text.toLowerCase().includes("patrul")
+    ) {
+        warnings.push("👮 Xodimning harakati ko‘rsatilmagan.");
+    }
+
+    document.getElementById("result").innerText =
+        "🛡️ AI NAZORAT NATIJASI\n\n" +
+        (warnings.length === 0
+        ? "✅ Qayd asosiy tekshiruvlardan o‘tdi.\n\nMajburiy maydonlarda aniq kamchilik topilmadi."
+        : "⚠️ Aniqlangan kamchiliklar:\n\n" +
+          warnings.join("\n"));
+
 }
 
-const lower=text.toLowerCase();
 
-let missing=[];
+function addReport() {
 
-if(!(/\d{1,2}[:.]\d{2}/.test(text)))
-missing.push("🕐 Vaqt");
+    const text =
+        document.getElementById("text").value.trim();
 
-if(
-!lower.includes("ko‘cha") &&
-!lower.includes("ko'cha") &&
-!lower.includes("mahalla") &&
-!lower.includes("bozor") &&
-!lower.includes("uy") &&
-!lower.includes("xonadon")
-)
-missing.push("📍 Joy");
+    if (!text) {
+        alert("Avval voqea ma'lumotini kiriting.");
+        return;
+    }
 
-if(
-!lower.includes("xodim") &&
-!lower.includes("yetib") &&
-!lower.includes("aniqladi") &&
-!lower.includes("to‘xtat") &&
-!lower.includes("to'xtat")
-)
-missing.push("👮 Xodim harakati");
+    let reports =
+        JSON.parse(localStorage.getItem("ppxReports") || "[]");
 
-if(text.length<60)
-missing.push("📝 Holat tafsilotlari");
+    reports.push({
+        text: text,
+        date: new Date().toLocaleDateString("uz-UZ")
+    });
 
-let output="🛡️ AI NAZORAT NATIJASI\n\n";
+    localStorage.setItem(
+        "ppxReports",
+        JSON.stringify(reports)
+    );
 
-if(missing.length===0){
+    alert("✅ Qayd statistika bazasiga qo‘shildi.");
 
-output+=
-"✅ Qayd asosiy tekshiruvlardan o‘tdi.\n\n"+
-"Majburiy maydonlarda aniq kamchilik topilmadi.\n\n"+
-"⚠️ Bu avtomatik dastlabki nazorat. Yakuniy bahoni xodim beradi.";
-
-}else{
-
-output+=
-"⚠️ QAYDDA YETISHMAYOTGAN MA’LUMOTLAR:\n\n"+
-missing.map(x=>"• "+x).join("\n")+
-"\n\n💡 Tavsiya:\n"+
-"Qaydni qo‘shimcha ma’lumotlar bilan to‘ldiring.\n\n"+
-"⚠️ Bu avtomatik dastlabki nazorat. Yakuniy bahoni xodim beradi.";
+    showStats();
 }
 
-result.innerText=output;
+
+function showStats() {
+
+    let reports =
+        JSON.parse(localStorage.getItem("ppxReports") || "[]");
+
+    if (reports.length === 0) {
+
+        document.getElementById("stats").innerHTML =
+            "Hozircha statistika yo‘q.";
+
+        return;
+    }
+
+    let types = {};
+    let times = {};
+
+    reports.forEach(r => {
+
+        const text = r.text.toLowerCase();
+
+        let type = "Boshqa hodisa";
+
+        if (
+            text.includes("janjal") ||
+            text.includes("urush")
+        ) {
+            type = "Janjal";
+        }
+        else if (
+            text.includes("o‘g‘ri") ||
+            text.includes("o'g'ri") ||
+            text.includes("o‘g‘rilik")
+        ) {
+            type = "O‘g‘rilik";
+        }
+        else if (
+            text.includes("avariya") ||
+            text.includes("yo‘l-transport")
+        ) {
+            type = "Yo‘l-transport hodisasi";
+        }
+        else if (text.includes("mast")) {
+            type = "Mast holat";
+        }
+
+        types[type] = (types[type] || 0) + 1;
+
+        const timeMatch =
+            text.match(/soat\s*(\d{1,2})[:.]\d{2}/i);
+
+        if (timeMatch) {
+
+            const hour = timeMatch[1];
+
+            times[hour] =
+                (times[hour] || 0) + 1;
+        }
+
+    });
+
+
+    let typeHTML = "";
+
+    Object.keys(types).forEach(type => {
+
+        typeHTML += `
+        <div class="stat">
+            <span>🚨 ${type}</span>
+            <b>${types[type]} ta</b>
+        </div>
+        `;
+
+    });
+
+
+    let busiestHour = "Aniqlanmadi";
+    let max = 0;
+
+    Object.keys(times).forEach(hour => {
+
+        if (times[hour] > max) {
+
+            max = times[hour];
+            busiestHour = hour + ":00 atrofida";
+
+        }
+
+    });
+
+
+    document.getElementById("stats").innerHTML = `
+
+        <div class="big">${reports.length}</div>
+
+        <p style="text-align:center;">
+        Jami qaydlar
+        </p>
+
+        <hr>
+
+        <h4>🚨 Hodisalar turi</h4>
+
+        ${typeHTML}
+
+        <h4>⏰ Eng ko‘p qayd tushgan vaqt</h4>
+
+        <div class="stat">
+            <span>🕐 Vaqt</span>
+            <b>${busiestHour}</b>
+        </div>
+
+        <p>
+        ⚠️ Statistika demo ma'lumotlar asosida ishlaydi.
+        </p>
+    `;
+
 }
 
 </script>
 
 </body>
-</html>  
+</html>
