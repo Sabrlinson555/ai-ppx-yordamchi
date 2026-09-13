@@ -6,89 +6,20 @@
 <title>AI PPX Yordamchi</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  margin: 0;
-  background: #f2f4f7;
-  color: #172033;
-}
-
-header {
-  background: #172033;
-  color: white;
-  padding: 22px 15px;
-  text-align: center;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 25px;
-}
-
-header p {
-  margin: 8px 0 0;
-  opacity: .8;
-}
-
-.container {
-  max-width: 700px;
-  margin: 25px auto;
-  padding: 15px;
-}
-
-.card {
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 3px 12px rgba(0,0,0,.08);
-}
-
-textarea {
-  width: 100%;
-  min-height: 160px;
-  padding: 15px;
-  border: 1px solid #ccd2dc;
-  border-radius: 10px;
-  font-size: 16px;
-  resize: vertical;
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 10px;
-  background: #172033;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.voice {
-  background: #315c9b;
-}
-
-.result {
-  background: #f7f8fa;
-  border-left: 4px solid #172033;
-  padding: 15px;
-  border-radius: 8px;
-  line-height: 1.6;
-  white-space: pre-line;
-}
-
-.warning {
-  margin-top: 12px;
-  padding: 12px;
-  background: #fff4d6;
-  border-radius: 8px;
-}
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f2f4f7;color:#172033}
+header{background:#172033;color:white;padding:22px 15px;text-align:center}
+header h1{margin:0;font-size:25px}
+header p{margin:8px 0 0;opacity:.8}
+.container{max-width:700px;margin:25px auto;padding:15px}
+.card{background:white;border-radius:15px;padding:20px;margin-bottom:18px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+textarea{width:100%;min-height:160px;padding:15px;border:1px solid #ccd2dc;border-radius:10px;font-size:16px}
+button{width:100%;padding:15px;margin-top:12px;border:0;border-radius:10px;background:#172033;color:white;font-size:16px;font-weight:bold}
+.voice{background:#315c9b}
+.check{background:#56616f}
+.result{background:#f7f8fa;border-left:4px solid #172033;padding:15px;border-radius:8px;line-height:1.6;white-space:pre-line}
+.good{background:#e7f7ec;padding:12px;border-radius:8px;margin-top:12px}
+.bad{background:#fff4d6;padding:12px;border-radius:8px;margin-top:12px}
 </style>
 </head>
 
@@ -115,6 +46,9 @@ placeholder="Holatni yozing yoki ovoz orqali kiriting..."></textarea>
 🤖 AI TAHLIL QILISH
 </button>
 
+<button class="check" onclick="checkReport()">
+🛡️ AI NAZORAT
+</button>
 </div>
 
 <div class="card">
@@ -130,162 +64,90 @@ Ma'lumot kiritilgandan keyin natija shu yerda chiqadi.
 
 <script>
 
-function startVoice() {
+function startVoice(){
 
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
 
-  if (!SpeechRecognition) {
-    alert("Bu brauzer ovozli kiritishni qo‘llab-quvvatlamaydi.");
-    return;
-  }
+if(!SpeechRecognition){
+alert("Bu brauzer ovozli kiritishni qo‘llab-quvvatlamaydi.");
+return;
+}
 
-  const recognition = new SpeechRecognition();
+const recognition=new SpeechRecognition();
 
-  recognition.lang = "uz-UZ";
-  recognition.continuous = false;
-  recognition.interimResults = false;
+recognition.lang="uz-UZ";
+recognition.continuous=false;
+recognition.interimResults=false;
 
-  recognition.onstart = function() {
-    document.getElementById("result").innerText =
-      "🎙️ Tinglayapman... Gapiring.";
-  };
+recognition.onstart=function(){
+document.getElementById("result").innerText=
+"🎙️ Tinglayapman... Gapiring.";
+};
 
-  recognition.onresult = function(event) {
+recognition.onresult=function(event){
 
-    const text =
-      event.results[0][0].transcript;
+const text=event.results[0][0].transcript;
 
-    document.getElementById("inputText").value = text;
+document.getElementById("inputText").value=text;
 
-    document.getElementById("result").innerText =
-      "✅ Ovoz matnga aylantirildi.\n\n" +
-      "Endi «AI TAHLIL QILISH» tugmasini bosing.";
-  };
+document.getElementById("result").innerText=
+"✅ Ovoz matnga aylantirildi.\n\n"+
+"Endi «AI TAHLIL QILISH» yoki «AI NAZORAT» tugmasini bosing.";
+};
 
-  recognition.onerror = function() {
-    document.getElementById("result").innerText =
-      "⚠️ Ovoz kiritishda xatolik yuz berdi.";
-  };
+recognition.onerror=function(){
+document.getElementById("result").innerText=
+"⚠️ Ovoz kiritishda xatolik yuz berdi.";
+};
 
-  recognition.start();
+recognition.start();
 }
 
 
-function analyze() {
+function analyze(){
 
-  const text =
-    document.getElementById("inputText").value.trim();
+const text=document.getElementById("inputText").value.trim();
+const result=document.getElementById("result");
 
-  const result =
-    document.getElementById("result");
+if(!text){
+result.innerText="⚠️ Avval xizmat holatini yozing.";
+return;
+}
 
-  if (!text) {
-    result.innerText =
-      "⚠️ Avval xizmat holatini yozing yoki ovoz orqali kiriting.";
-    return;
-  }
+const lower=text.toLowerCase();
 
-  const lower = text.toLowerCase();
+let date="KO‘RSATILMAGAN";
+let time="KO‘RSATILMAGAN";
+let place="KO‘RSATILMAGAN";
+let eventType="Boshqa holat";
 
-  let date = "KO‘RSATILMAGAN";
-  let time = "KO‘RSATILMAGAN";
-  let place = "KO‘RSATILMAGAN";
-  let eventType = "Boshqa holat";
+const dateMatch=text.match(/\b\d{1,2}[-./]\w+/i);
+if(dateMatch) date=dateMatch[0];
 
+const timeMatch=text.match(/\b\d{1,2}[:.]\d{2}\b/);
+if(timeMatch) time=timeMatch[0];
 
-  // SANA
-  const dateMatch =
-    text.match(/\b\d{1,2}[-./]\w+/i);
+if(lower.includes("ko‘chada")||lower.includes("ko'chada"))
+place="Ko‘cha hududi";
+else if(lower.includes("mahallada")||lower.includes("mahallasida"))
+place="Mahalla hududi";
+else if(lower.includes("bozorda")||lower.includes("bozorida"))
+place="Bozor hududi";
+else if(lower.includes("uyda")||lower.includes("xonadonda"))
+place="Xonadon";
 
-  if (dateMatch) {
-    date = dateMatch[0];
-  }
+if(lower.includes("janjal")||lower.includes("urush")||lower.includes("mushtlash"))
+eventType="Janjal / tartibbuzarlik";
+else if(lower.includes("avariya")||lower.includes("yo‘l")||lower.includes("yo'l"))
+eventType="Yo‘l-transport holati";
+else if(lower.includes("o‘g‘irlik")||lower.includes("o'g'irlik"))
+eventType="O‘g‘irlik holati";
+else if(lower.includes("bezorilik"))
+eventType="Bezorilik holati";
 
-
-  // VAQT
-  const timeMatch =
-    text.match(/\b\d{1,2}[:.]\d{2}\b/);
-
-  if (timeMatch) {
-    time = timeMatch[0];
-  }
-
-
-  // JOY
-  if (
-    lower.includes("ko‘chada") ||
-    lower.includes("ko'chada") ||
-    lower.includes("ko‘chasida") ||
-    lower.includes("ko'chasida")
-  ) {
-    place = "Ko‘cha hududi";
-  }
-
-  else if (
-    lower.includes("mahallada") ||
-    lower.includes("mahallasida")
-  ) {
-    place = "Mahalla hududi";
-  }
-
-  else if (
-    lower.includes("bozorda") ||
-    lower.includes("bozorida")
-  ) {
-    place = "Bozor hududi";
-  }
-
-  else if (
-    lower.includes("uyda") ||
-    lower.includes("xonadonda")
-  ) {
-    place = "Xonadon";
-  }
-
-
-  // HOLAT TURI
-  if (
-    lower.includes("janjal") ||
-    lower.includes("urush") ||
-    lower.includes("mushtlash")
-  ) {
-    eventType =
-      "Janjal / tartibbuzarlik";
-  }
-
-  else if (
-    lower.includes("avariya") ||
-    lower.includes("yo‘l") ||
-    lower.includes("yo'l") ||
-    lower.includes("to‘qnash") ||
-    lower.includes("to'qnash")
-  ) {
-    eventType =
-      "Yo‘l-transport holati";
-  }
-
-  else if (
-    lower.includes("o‘g‘ri") ||
-    lower.includes("o'g'ri") ||
-    lower.includes("o‘g‘irlik") ||
-    lower.includes("o'g'irlik")
-  ) {
-    eventType =
-      "O‘g‘irlik holati";
-  }
-
-  else if (
-    lower.includes("bezorilik") ||
-    lower.includes("bezori")
-  ) {
-    eventType =
-      "Bezorilik holati";
-  }
-
-
-  let output =
+result.innerText=
 `📅 Sana: ${date}
 
 🕐 Vaqt: ${time}
@@ -296,33 +158,74 @@ function analyze() {
 
 📝 Xodim tomonidan qayd:
 
-${text}`;
+${text}
+
+✅ Dastlabki qayd shakllantirildi.`;
+}
 
 
-  // TEKSHIRUV
-  if (text.length < 50) {
+function checkReport(){
 
-    output +=
-`\n\n⚠️ TEKSHIRISH KERAK:
+const text=document.getElementById("inputText").value.trim();
+const result=document.getElementById("result");
 
-Holat haqida ma’lumot kam.
-Qo‘shimcha ma’lumot kiritish tavsiya etiladi.`;
+if(!text){
+result.innerText="⚠️ Avval xizmat holatini kiriting.";
+return;
+}
 
-  } else {
+const lower=text.toLowerCase();
 
-    output +=
-`\n\n✅ Dastlabki qayd shakllantirildi.
+let missing=[];
 
-🔎 Nazorat:
-Sana, vaqt, joy va holat turi tekshirildi.`;
+if(!(/\d{1,2}[:.]\d{2}/.test(text)))
+missing.push("🕐 Vaqt");
 
-  }
+if(
+!lower.includes("ko‘cha") &&
+!lower.includes("ko'cha") &&
+!lower.includes("mahalla") &&
+!lower.includes("bozor") &&
+!lower.includes("uy") &&
+!lower.includes("xonadon")
+)
+missing.push("📍 Joy");
 
+if(
+!lower.includes("xodim") &&
+!lower.includes("yetib") &&
+!lower.includes("aniqladi") &&
+!lower.includes("to‘xtat") &&
+!lower.includes("to'xtat")
+)
+missing.push("👮 Xodim harakati");
 
-  result.innerText = output;
+if(text.length<60)
+missing.push("📝 Holat tafsilotlari");
+
+let output="🛡️ AI NAZORAT NATIJASI\n\n";
+
+if(missing.length===0){
+
+output+=
+"✅ Qayd asosiy tekshiruvlardan o‘tdi.\n\n"+
+"Majburiy maydonlarda aniq kamchilik topilmadi.\n\n"+
+"⚠️ Bu avtomatik dastlabki nazorat. Yakuniy bahoni xodim beradi.";
+
+}else{
+
+output+=
+"⚠️ QAYDDA YETISHMAYOTGAN MA’LUMOTLAR:\n\n"+
+missing.map(x=>"• "+x).join("\n")+
+"\n\n💡 Tavsiya:\n"+
+"Qaydni qo‘shimcha ma’lumotlar bilan to‘ldiring.\n\n"+
+"⚠️ Bu avtomatik dastlabki nazorat. Yakuniy bahoni xodim beradi.";
+}
+
+result.innerText=output;
 }
 
 </script>
 
 </body>
-</html>
+</html>  
