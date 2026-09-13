@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI PPX Yordamchi</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f2f4f7;
+      color: #172033;
+    }
+
+    header {
+      background: #172033;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 7px 0 0;
+      opacity: 0.8;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 15px;
+      border: 1px solid #ccd2dc;
+      border-radius: 10px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #172033;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .result {
+      background: #f7f8fa;
+      border-left: 4px solid #172033;
+      padding: 15px;
+      border-radius: 8px;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .warning {
+      margin-top: 12px;
+      padding: 12px;
+      background: #fff4d6;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🤖 AI PPX YORDAMCHI</h1>
+  <p>PPX xodimi uchun xizmat qaydlarini tartiblashtirish</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>📝 Xizmat qaydi</h2>
+
+    <textarea id="inputText"
+      placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko'chada ikki fuqaro janjallashayotgan edi. Xodimlar yetib borib ularni ajratdi va tushuntirish berdi."></textarea>
+
+    <button onclick="analyze()">🤖 AI TAHLIL QILISH</button>
+  </div>
+
+  <div class="card">
+    <h2>📋 Natija</h2>
+
+    <div id="result" class="result">
+      Ma'lumot kiritilgandan keyin natija shu yerda chiqadi.
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+function analyze() {
+
+  const text = document.getElementById("inputText").value.trim();
+  const result = document.getElementById("result");
+
+  if (!text) {
+    result.innerText = "⚠️ Avval xizmat holatini yozing.";
+    return;
+  }
+
+  let date = "KO‘RSATILMAGAN";
+  let time = "KO‘RSATILMAGAN";
+  let place = "KO‘RSATILMAGAN";
+
+  // Sana aniqlash
+  const dateMatch = text.match(/\d{1,2}[-./]\w+/i);
+  if (dateMatch) {
+    date = dateMatch[0];
+  }
+
+  // Vaqt aniqlash
+  const timeMatch = text.match(/\b\d{1,2}[:.]\d{2}\b/);
+  if (timeMatch) {
+    time = timeMatch[0];
+  }
+
+  // Joy aniqlash
+  if (text.toLowerCase().includes("ko‘chada") ||
+      text.toLowerCase().includes("ko'chada")) {
+    place = "Ko‘cha hududi";
+  }
+
+  let eventType = "Boshqa holat";
+
+  if (text.toLowerCase().includes("janjal") ||
+      text.toLowerCase().includes("urush")) {
+    eventType = "Janjal / tartibbuzarlik";
+  }
+
+  if (text.toLowerCase().includes("yo‘l") ||
+      text.toLowerCase().includes("avariya")) {
+    eventType = "Yo‘l-transport holati";
+  }
+
+  result.innerText =
+`📅 Sana: ${date}
+
+🕐 Vaqt: ${time}
+
+📍 Joy: ${place}
+
+⚠️ Holat turi: ${eventType}
+
+📝 Xodim tomonidan qayd:
+${text}`;
+
+  if (text.length < 40) {
+    result.innerText +=
+      "\n\n⚠️ TEKSHIRISH KERAK:\nHolat haqida qo‘shimcha ma’lumot kam.";
+  } else {
+    result.innerText +=
+      "\n\n✅ Dastlabki qayd shakllantirildi.";
+  }
+}
+
+</script>
+
+</body>
+</html>
