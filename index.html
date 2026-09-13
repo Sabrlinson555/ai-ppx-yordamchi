@@ -50,11 +50,6 @@ button {
     background: #123b5d;
     color: white;
     font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #0b2c46;
 }
 
 .result {
@@ -75,10 +70,24 @@ button:hover {
 }
 
 .big {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: bold;
     color: #123b5d;
     text-align: center;
+}
+
+.alert {
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #fff3cd;
+}
+
+.success {
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #d1e7dd;
 }
 </style>
 </head>
@@ -90,37 +99,35 @@ button:hover {
 <h1>🛡️ PPX YORDAMCHI</h1>
 
 <div class="card">
-
 <h3>📝 Voqea ma'lumotini kiriting</h3>
 
 <textarea id="text"
-placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko‘chada ikki fuqaro janjallashayotgan edi. Xodimlar yetib borib, fuqarolarni ajratdi va tushuntirish berdi."></textarea>
+placeholder="Voqea haqida ma'lumot yozing..."></textarea>
 
 <button onclick="voiceInput()">🎙️ OVOZ ORQALI KIRITISH</button>
-
 <button onclick="analyze()">🤖 AI TAHLIL QILISH</button>
-
 <button onclick="control()">🛡️ AI NAZORAT</button>
-
 </div>
 
+
 <div class="card">
-
 <h3>📋 AI TAHLIL NATIJASI</h3>
-
 <div id="result" class="result">
 Hozircha ma'lumot yo‘q.
 </div>
-
 </div>
 
-<div class="card">
 
+<div class="card">
 <h3>📊 AI TAHLIL / STATISTIKA</h3>
 
-<button onclick="addReport()">➕ QAYDNI STATISTIKAGA QO‘SHISH</button>
+<button onclick="addReport()">
+➕ QAYDNI STATISTIKAGA QO‘SHISH
+</button>
 
-<button onclick="showStats()">📊 STATISTIKANI KO‘RISH</button>
+<button onclick="showStats()">
+📊 STATISTIKANI KO‘RISH
+</button>
 
 <div id="stats" class="result">
 Hozircha statistika yo‘q.
@@ -129,6 +136,7 @@ Hozircha statistika yo‘q.
 </div>
 
 </div>
+
 
 <script>
 
@@ -165,12 +173,59 @@ function voiceInput() {
     };
 
     recognition.onerror = function() {
-
         document.getElementById("result").innerText =
-            "❌ Ovozli kiritishda xatolik yuz berdi.";
+            "❌ Ovozli kiritishda xatolik.";
     };
 
     recognition.start();
+}
+
+
+function detectType(text) {
+
+    text = text.toLowerCase();
+
+    if (
+        text.includes("janjal") ||
+        text.includes("urush") ||
+        text.includes("mushtlash")
+    ) {
+        return "Janjal";
+    }
+
+    if (
+        text.includes("o‘g‘ri") ||
+        text.includes("o'g'ri") ||
+        text.includes("o‘g‘rilik") ||
+        text.includes("o'g'rilik")
+    ) {
+        return "O‘g‘rilik";
+    }
+
+    if (
+        text.includes("avariya") ||
+        text.includes("yth") ||
+        text.includes("yo‘l-transport") ||
+        text.includes("yo'l-transport")
+    ) {
+        return "Yo‘l-transport hodisasi";
+    }
+
+    if (
+        text.includes("mast") ||
+        text.includes("spirtli")
+    ) {
+        return "Mast holat";
+    }
+
+    if (
+        text.includes("bezorilik") ||
+        text.includes("bezori")
+    ) {
+        return "Bezorilik";
+    }
+
+    return "Boshqa hodisa";
 }
 
 
@@ -187,7 +242,6 @@ function analyze() {
     let date = "Aniqlanmadi";
     let time = "Aniqlanmadi";
     let place = "Aniqlanmadi";
-    let type = "Boshqa hodisa";
 
     const dateMatch =
         text.match(/(\d{1,2})[-\s](sentabr|sentyabr|oktabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul|avgust)/i);
@@ -209,7 +263,6 @@ function analyze() {
         "mahalla",
         "bozor",
         "bekat",
-        "uy",
         "maktab",
         "do‘kon",
         "do'kon",
@@ -223,32 +276,9 @@ function analyze() {
         }
     }
 
-    if (
-        text.toLowerCase().includes("janjal") ||
-        text.toLowerCase().includes("urush")
-    ) {
-        type = "Janjal";
-    }
-    else if (
-        text.toLowerCase().includes("o‘g‘ri") ||
-        text.toLowerCase().includes("o'g'ri") ||
-        text.toLowerCase().includes("o‘g‘rilik")
-    ) {
-        type = "O‘g‘rilik";
-    }
-    else if (
-        text.toLowerCase().includes("avariya") ||
-        text.toLowerCase().includes("yo‘l-transport")
-    ) {
-        type = "Yo‘l-transport hodisasi";
-    }
-    else if (
-        text.toLowerCase().includes("mast")
-    ) {
-        type = "Mast holat";
-    }
+    const type = detectType(text);
 
-    const result =
+    document.getElementById("result").innerText =
 `📅 Sana: ${date}
 ⏰ Vaqt: ${time}
 📍 Joy: ${place}
@@ -256,8 +286,6 @@ function analyze() {
 
 📝 Qayd:
 ${text}`;
-
-    document.getElementById("result").innerText = result;
 }
 
 
@@ -294,13 +322,24 @@ function control() {
         warnings.push("👮 Xodimning harakati ko‘rsatilmagan.");
     }
 
-    document.getElementById("result").innerText =
-        "🛡️ AI NAZORAT NATIJASI\n\n" +
-        (warnings.length === 0
-        ? "✅ Qayd asosiy tekshiruvlardan o‘tdi.\n\nMajburiy maydonlarda aniq kamchilik topilmadi."
-        : "⚠️ Aniqlangan kamchiliklar:\n\n" +
-          warnings.join("\n"));
+    if (warnings.length === 0) {
 
+        document.getElementById("result").innerHTML =
+        `<div class="success">
+        🛡️ <b>AI NAZORAT NATIJASI</b><br><br>
+        ✅ Qayd asosiy tekshiruvlardan o‘tdi.<br><br>
+        Majburiy maydonlarda aniq kamchilik topilmadi.
+        </div>`;
+
+    } else {
+
+        document.getElementById("result").innerHTML =
+        `<div class="alert">
+        🛡️ <b>AI NAZORAT NATIJASI</b><br><br>
+        ⚠️ Aniqlangan kamchiliklar:<br><br>
+        ${warnings.join("<br>")}
+        </div>`;
+    }
 }
 
 
@@ -319,7 +358,8 @@ function addReport() {
 
     reports.push({
         text: text,
-        date: new Date().toLocaleDateString("uz-UZ")
+        type: detectType(text),
+        savedAt: new Date().toLocaleString("uz-UZ")
     });
 
     localStorage.setItem(
@@ -349,48 +389,24 @@ function showStats() {
     let types = {};
     let times = {};
 
-    reports.forEach(r => {
+    reports.forEach(report => {
 
-        const text = r.text.toLowerCase();
+        const type = report.type || detectType(report.text);
 
-        let type = "Boshqa hodisa";
-
-        if (
-            text.includes("janjal") ||
-            text.includes("urush")
-        ) {
-            type = "Janjal";
-        }
-        else if (
-            text.includes("o‘g‘ri") ||
-            text.includes("o'g'ri") ||
-            text.includes("o‘g‘rilik")
-        ) {
-            type = "O‘g‘rilik";
-        }
-        else if (
-            text.includes("avariya") ||
-            text.includes("yo‘l-transport")
-        ) {
-            type = "Yo‘l-transport hodisasi";
-        }
-        else if (text.includes("mast")) {
-            type = "Mast holat";
-        }
-
-        types[type] = (types[type] || 0) + 1;
+        types[type] =
+            (types[type] || 0) + 1;
 
         const timeMatch =
-            text.match(/soat\s*(\d{1,2})[:.]\d{2}/i);
+            report.text.match(/soat\s*(\d{1,2})[:.]\d{2}/i);
 
         if (timeMatch) {
 
-            const hour = timeMatch[1];
+            const hour =
+                parseInt(timeMatch[1]);
 
             times[hour] =
                 (times[hour] || 0) + 1;
         }
-
     });
 
 
@@ -402,53 +418,71 @@ function showStats() {
         <div class="stat">
             <span>🚨 ${type}</span>
             <b>${types[type]} ta</b>
-        </div>
-        `;
+        </div>`;
+    });
 
+
+    let mostCommon = "Aniqlanmadi";
+    let maxType = 0;
+
+    Object.keys(types).forEach(type => {
+
+        if (types[type] > maxType) {
+            maxType = types[type];
+            mostCommon = type;
+        }
     });
 
 
     let busiestHour = "Aniqlanmadi";
-    let max = 0;
+    let maxHour = 0;
 
     Object.keys(times).forEach(hour => {
 
-        if (times[hour] > max) {
+        if (times[hour] > maxHour) {
 
-            max = times[hour];
-            busiestHour = hour + ":00 atrofida";
+            maxHour = times[hour];
 
+            busiestHour =
+                String(hour).padStart(2, "0") + ":00 atrofida";
         }
-
     });
 
 
     document.getElementById("stats").innerHTML = `
 
-        <div class="big">${reports.length}</div>
+    <div class="big">
+        ${reports.length}
+    </div>
 
-        <p style="text-align:center;">
+    <p style="text-align:center;">
         Jami qaydlar
-        </p>
+    </p>
 
-        <hr>
+    <hr>
 
-        <h4>🚨 Hodisalar turi</h4>
+    <h4>🚨 Hodisalar bo‘yicha taqsimot</h4>
 
-        ${typeHTML}
+    ${typeHTML}
 
-        <h4>⏰ Eng ko‘p qayd tushgan vaqt</h4>
+    <h4>🏆 Eng ko‘p uchragan hodisa</h4>
 
-        <div class="stat">
-            <span>🕐 Vaqt</span>
-            <b>${busiestHour}</b>
-        </div>
+    <div class="stat">
+        <span>🚨 Hodisa</span>
+        <b>${mostCommon}</b>
+    </div>
 
-        <p>
-        ⚠️ Statistika demo ma'lumotlar asosida ishlaydi.
-        </p>
+    <h4>⏰ Eng faol vaqt</h4>
+
+    <div class="stat">
+        <span>🕐 Vaqt</span>
+        <b>${busiestHour}</b>
+    </div>
+
+    <p>
+    ⚠️ Ushbu statistika demo ma'lumotlar asosida ishlaydi.
+    </p>
     `;
-
 }
 
 </script>
