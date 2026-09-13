@@ -232,6 +232,33 @@ return "Bezorilik";
 return "Boshqa hodisa";
 
 }
+ function detectRisk(text){
+
+text=text.toLowerCase();
+
+if(
+text.includes("qurol")||
+text.includes("pichoq")||
+text.includes("bosqinchilik")||
+text.includes("og‘ir jarohat")||
+text.includes("og'ir jarohat")
+)
+return "🔴 YUQORI XAVF";
+
+if(
+text.includes("janjal")||
+text.includes("urush")||
+text.includes("mushtlash")||
+text.includes("bezorilik")||
+text.includes("mast")||
+text.includes("avariya")||
+text.includes("yth")
+)
+return "🟠 O‘RTA XAVF";
+
+return "🟢 PAST XAVF";
+
+ }
 
 
 /* JOY */
