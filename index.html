@@ -908,7 +908,43 @@ map.invalidateSize();
 },300);
 
 } 
+function generateReport(){
+const text=document.getElementById("text").value.trim();
 
+if(!text){
+alert("Avval voqea ma'lumotini kiriting.");
+return;
+}
+
+let date="Aniqlanmadi";
+let time="Aniqlanmadi";
+
+const dateMatch=text.match(/(\d{1,2})[-\s](sentabr|sentyabr|oktabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul|avgust)/i);
+if(dateMatch) date=dateMatch[0];
+
+const timeMatch=text.match(/soat\s*(\d{1,2}[:.]\d{2})/i);
+if(timeMatch) time=timeMatch[1].replace(".",":");
+
+const type=detectType(text);
+const place=detectPlace(text);
+
+document.getElementById("serviceReport").innerText=
+`📄 XIZMAT HISOBOTI
+
+📅 Sana: ${date}
+
+⏰ Vaqt: ${time}
+
+📍 Joy: ${place}
+
+🚨 Hodisa turi: ${type}
+
+📝 Voqea bayoni:
+${text}
+
+👮 Xodimlar harakati:
+Qayd matnida ko‘rsatilgan ma’lumotlar asosida.`;
+}
 </script>
 
 </body>
