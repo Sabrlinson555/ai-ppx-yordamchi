@@ -946,6 +946,50 @@ ${text}
 Qayd matnida ko‘rsatilgan ma’lumotlar asosida.`;
 }
  <button onclick="printReport()">🖨️ HISOBOTNI CHOP ETISH / PDF</button>
+function printReport(){
+const report=document.getElementById("serviceReport").innerText;
+
+if(!report || report==="Hisobot hali tayyorlanmagan."){
+alert("Avval hisobotni tayyorlang.");
+return;
+}
+
+const printWindow=window.open("","_blank");
+
+printWindow.document.write(`
+<html>
+<head>
+<title>PPX Xizmat hisoboti</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+padding:30px;
+line-height:1.6;
+}
+h1{
+text-align:center;
+}
+pre{
+white-space:pre-wrap;
+font-family:Arial,sans-serif;
+font-size:16px;
+}
+</style>
+</head>
+<body>
+<h1>PPX XIZMAT HISOBOTI</h1>
+<pre>${report}</pre>
+</body>
+</html>
+`);
+
+printWindow.document.close();
+printWindow.focus();
+
+setTimeout(function(){
+printWindow.print();
+},500);
+}
 </script>
 
 </body>
