@@ -1094,6 +1094,42 @@ showMap();
 
 
 }
+ function editReport(index){
+
+let reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+const newText=prompt(
+"Qaydni tahrirlang:",
+reports[index].text
+);
+
+if(newText===null){
+return;
+}
+
+if(!newText.trim()){
+alert("Qayd bo‘sh bo‘lishi mumkin emas.");
+return;
+}
+
+reports[index].text=newText.trim();
+reports[index].type=detectType(newText);
+reports[index].place=detectPlace(newText);
+
+localStorage.setItem(
+"ppxReports",
+JSON.stringify(reports)
+);
+
+document.getElementById("stats").innerHTML=
+"✅ Qayd tahrirlandi.";
+
+showMap();
+
+ }
 </script>
 
 </body>
