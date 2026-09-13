@@ -997,6 +997,66 @@ setTimeout(function(){
 printWindow.print();
 },500);
 }
+
+ function searchReports(){
+
+const query=
+document.getElementById("searchReport").value.toLowerCase().trim();
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+if(!query){
+document.getElementById("stats").innerHTML=
+"🔍 Qidirish uchun so‘z kiriting.";
+return;
+}
+
+const results=reports.filter(function(report){
+
+return (
+report.text.toLowerCase().includes(query) ||
+report.type.toLowerCase().includes(query) ||
+report.place.toLowerCase().includes(query)
+);
+
+});
+
+if(results.length===0){
+
+document.getElementById("stats").innerHTML=
+"❌ Bunday qayd topilmadi.";
+
+return;
+}
+
+let html=
+`🔍 <b>${results.length} ta qayd topildi</b><br><br>`;
+
+results.forEach(function(report,index){
+
+html+=`
+
+<div class="stat">
+
+<div>
+<b>🚨 ${report.type}</b><br>
+📍 ${report.place}<br>
+🕐 ${report.savedAt}<br>
+📝 ${report.text}
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("stats").innerHTML=html;
+
+}
 </script>
 
 </body>
