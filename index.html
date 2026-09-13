@@ -259,6 +259,17 @@ return "🟠 O‘RTA XAVF";
 return "🟢 PAST XAVF";
 
  }
+ function getRecommendation(risk){
+
+if(risk==="🔴 YUQORI XAVF")
+return "🚨 Zudlik bilan qo‘shimcha kuch va ehtiyot choralarini ko‘rish tavsiya etiladi.";
+
+if(risk==="🟠 O‘RTA XAVF")
+return "⚠️ Vaziyatni nazoratga olish va qo‘shimcha kuzatuv tavsiya etiladi.";
+
+return "🟢 Oddiy nazorat va vaziyatni kuzatish tavsiya etiladi.";
+
+ }
 
 
 /* JOY */
@@ -475,6 +486,9 @@ document.getElementById("result").innerHTML=
 <br><br>
 
 🛡️ <b>Xavflilik:</b> ${detectRisk(text)}
+<br><br>
+
+💡 <b>Tavsiya:</b> ${getRecommendation(detectRisk(text))}
 
 </div>`;
 
