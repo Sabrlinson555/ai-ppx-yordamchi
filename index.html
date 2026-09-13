@@ -1249,18 +1249,24 @@ JSON.parse(
 localStorage.getItem("ppxReports")||"[]"
 );
 
+const selected=
+selectedDate.split("-");
+
+const selectedDay=selected[2];
+const selectedMonth=selected[1];
+const selectedYear=selected[0];
+
 const results=reports.filter(function(report){
 
 if(!report.savedAt) return false;
 
-const parts=report.savedAt.split(",");
+const savedDate=report.savedAt.split(",")[0].trim();
 
-const date=parts[0].trim();
-
-const selected=
-selectedDate.split("-").reverse().join(".");
-
-return date===selected;
+return (
+savedDate.includes(selectedDay) &&
+savedDate.includes(selectedMonth) &&
+savedDate.includes(selectedYear)
+);
 
 });
 
@@ -1279,10 +1285,12 @@ results.forEach(function(report){
 
 html+=`
 <div class="stat">
+
 🚨 <b>${report.type}</b><br>
 📍 ${report.place}<br>
 🕐 ${report.savedAt}<br>
 📝 ${report.text}
+
 </div>
 `;
 
