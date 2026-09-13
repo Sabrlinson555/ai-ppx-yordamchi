@@ -4,96 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PPX Yordamchi</title>
-
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #eef2f5;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 700px;
-    margin: auto;
-}
-
-h1 {
-    text-align: center;
-    color: #123b5d;
-}
-
-.card {
-    background: white;
-    padding: 18px;
-    margin-top: 15px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px #0002;
-}
-
-textarea {
-    width: 100%;
-    height: 150px;
-    box-sizing: border-box;
-    padding: 12px;
-    border: 1px solid #bbb;
-    border-radius: 8px;
-    font-size: 16px;
-}
-
-button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #123b5d;
-    color: white;
-    font-size: 16px;
-}
-
-.result {
-    background: #f4f7f9;
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 10px;
-    white-space: pre-line;
-}
-
-.stat {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    margin-top: 8px;
-    background: #f1f5f8;
-    border-radius: 8px;
-}
-
-.big {
-    font-size: 30px;
-    font-weight: bold;
-    color: #123b5d;
-    text-align: center;
-}
-
-.alert {
-    padding: 14px;
-    margin-top: 10px;
-    border-radius: 8px;
-    background: #fff3cd;
-}
-
-.success {
-    padding: 14px;
-    margin-top: 10px;
-    border-radius: 8px;
-    background: #d1e7dd;
-}
+body{font-family:Arial,sans-serif;background:#eef2f5;margin:0;padding:20px}
+.container{max-width:700px;margin:auto}
+h1{text-align:center;color:#123b5d}
+.card{background:white;padding:18px;margin-top:15px;border-radius:12px;box-shadow:0 2px 8px #0002}
+textarea{width:100%;height:150px;box-sizing:border-box;padding:12px;border:1px solid #bbb;border-radius:8px;font-size:16px}
+button{width:100%;padding:13px;margin-top:10px;border:none;border-radius:8px;background:#123b5d;color:white;font-size:16px}
+.result{background:#f4f7f9;padding:12px;border-radius:8px;margin-top:10px;white-space:pre-line}
+.stat{display:flex;justify-content:space-between;padding:12px;margin-top:8px;background:#f1f5f8;border-radius:8px}
+.big{font-size:30px;font-weight:bold;color:#123b5d;text-align:center}
+.alert{padding:14px;margin-top:10px;border-radius:8px;background:#fff3cd}
+.success{padding:14px;margin-top:10px;border-radius:8px;background:#d1e7dd}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <h1>🛡️ PPX YORDAMCHI</h1>
@@ -102,183 +28,133 @@ button {
 <h3>📝 Voqea ma'lumotini kiriting</h3>
 
 <textarea id="text"
-placeholder="Voqea haqida ma'lumot yozing..."></textarea>
+placeholder="Masalan: 13-sentabr kuni soat 21:30 da markaziy ko‘chada ikki fuqaro janjallashayotgan edi. Xodimlar yetib borib, fuqarolarni ajratdi va tushuntirish berdi."></textarea>
 
 <button onclick="voiceInput()">🎙️ OVOZ ORQALI KIRITISH</button>
 <button onclick="analyze()">🤖 AI TAHLIL QILISH</button>
 <button onclick="control()">🛡️ AI NAZORAT</button>
 </div>
 
-
 <div class="card">
 <h3>📋 AI TAHLIL NATIJASI</h3>
-<div id="result" class="result">
-Hozircha ma'lumot yo‘q.
+<div id="result" class="result">Hozircha ma'lumot yo‘q.</div>
 </div>
-</div>
-
 
 <div class="card">
 <h3>📊 AI TAHLIL / STATISTIKA</h3>
 
-<button onclick="addReport()">
-➕ QAYDNI STATISTIKAGA QO‘SHISH
-</button>
+<button onclick="addReport()">➕ QAYDNI STATISTIKAGA QO‘SHISH</button>
+<button onclick="showStats()">📊 STATISTIKANI KO‘RISH</button>
 
-<button onclick="showStats()">
-📊 STATISTIKANI KO‘RISH
-</button>
-
-<div id="stats" class="result">
-Hozircha statistika yo‘q.
+<div id="stats" class="result">Hozircha statistika yo‘q.</div>
 </div>
 
 </div>
-
-</div>
-
 
 <script>
 
-function voiceInput() {
+function voiceInput(){
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
+if(!SpeechRecognition){
+alert("Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi.");
+return;
+}
 
-    if (!SpeechRecognition) {
-        alert("Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi.");
-        return;
-    }
+const recognition=new SpeechRecognition();
+recognition.lang="uz-UZ";
+recognition.interimResults=false;
 
-    const recognition = new SpeechRecognition();
+recognition.onstart=function(){
+document.getElementById("result").innerText="🎙️ Tinglayapman...";
+};
 
-    recognition.lang = "uz-UZ";
-    recognition.interimResults = false;
+recognition.onresult=function(event){
+const text=event.results[0][0].transcript;
+document.getElementById("text").value=text;
+document.getElementById("result").innerText="✅ Ovoz matnga aylantirildi.";
+};
 
-    recognition.onstart = function() {
-        document.getElementById("result").innerText =
-            "🎙️ Tinglayapman...";
-    };
+recognition.onerror=function(){
+document.getElementById("result").innerText="❌ Ovozli kiritishda xatolik.";
+};
 
-    recognition.onresult = function(event) {
-
-        const text =
-            event.results[0][0].transcript;
-
-        document.getElementById("text").value = text;
-
-        document.getElementById("result").innerText =
-            "✅ Ovoz matnga aylantirildi.";
-    };
-
-    recognition.onerror = function() {
-        document.getElementById("result").innerText =
-            "❌ Ovozli kiritishda xatolik.";
-    };
-
-    recognition.start();
+recognition.start();
 }
 
 
-function detectType(text) {
+function detectType(text){
 
-    text = text.toLowerCase();
+text=text.toLowerCase();
 
-    if (
-        text.includes("janjal") ||
-        text.includes("urush") ||
-        text.includes("mushtlash")
-    ) {
-        return "Janjal";
-    }
+if(text.includes("janjal")||text.includes("urush")||text.includes("mushtlash"))
+return "Janjal";
 
-    if (
-        text.includes("o‘g‘ri") ||
-        text.includes("o'g'ri") ||
-        text.includes("o‘g‘rilik") ||
-        text.includes("o'g'rilik")
-    ) {
-        return "O‘g‘rilik";
-    }
+if(text.includes("o‘g‘ri")||text.includes("o'g'ri")||text.includes("o‘g‘rilik")||text.includes("o'g'rilik"))
+return "O‘g‘rilik";
 
-    if (
-        text.includes("avariya") ||
-        text.includes("yth") ||
-        text.includes("yo‘l-transport") ||
-        text.includes("yo'l-transport")
-    ) {
-        return "Yo‘l-transport hodisasi";
-    }
+if(text.includes("avariya")||text.includes("yth")||text.includes("yo‘l-transport")||text.includes("yo'l-transport"))
+return "Yo‘l-transport hodisasi";
 
-    if (
-        text.includes("mast") ||
-        text.includes("spirtli")
-    ) {
-        return "Mast holat";
-    }
+if(text.includes("mast")||text.includes("spirtli"))
+return "Mast holat";
 
-    if (
-        text.includes("bezorilik") ||
-        text.includes("bezori")
-    ) {
-        return "Bezorilik";
-    }
+if(text.includes("bezorilik")||text.includes("bezori"))
+return "Bezorilik";
 
-    return "Boshqa hodisa";
+return "Boshqa hodisa";
 }
 
 
-function analyze() {
+function detectPlace(text){
 
-    const text =
-        document.getElementById("text").value.trim();
+const places=[
+"markaziy ko‘cha",
+"markaziy ko'cha",
+"ko‘cha",
+"ko'cha",
+"mahalla",
+"bozor",
+"bekat",
+"maktab",
+"do‘kon",
+"do'kon",
+"park"
+];
 
-    if (!text) {
-        alert("Avval voqea haqida ma'lumot kiriting.");
-        return;
-    }
+for(let p of places){
+if(text.toLowerCase().includes(p))
+return p;
+}
 
-    let date = "Aniqlanmadi";
-    let time = "Aniqlanmadi";
-    let place = "Aniqlanmadi";
+return "Noma'lum joy";
+}
 
-    const dateMatch =
-        text.match(/(\d{1,2})[-\s](sentabr|sentyabr|oktabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul|avgust)/i);
 
-    if (dateMatch) {
-        date = dateMatch[0];
-    }
+function analyze(){
 
-    const timeMatch =
-        text.match(/soat\s*(\d{1,2}[:.]\d{2})/i);
+const text=document.getElementById("text").value.trim();
 
-    if (timeMatch) {
-        time = timeMatch[1].replace(".", ":");
-    }
+if(!text){
+alert("Avval voqea haqida ma'lumot kiriting.");
+return;
+}
 
-    const places = [
-        "ko‘cha",
-        "ko'cha",
-        "mahalla",
-        "bozor",
-        "bekat",
-        "maktab",
-        "do‘kon",
-        "do'kon",
-        "park"
-    ];
+let date="Aniqlanmadi";
+let time="Aniqlanmadi";
 
-    for (let p of places) {
-        if (text.toLowerCase().includes(p)) {
-            place = p;
-            break;
-        }
-    }
+const dateMatch=text.match(/(\d{1,2})[-\s](sentabr|sentyabr|oktabr|noyabr|dekabr|yanvar|fevral|mart|aprel|may|iyun|iyul|avgust)/i);
 
-    const type = detectType(text);
+if(dateMatch) date=dateMatch[0];
 
-    document.getElementById("result").innerText =
+const timeMatch=text.match(/soat\s*(\d{1,2}[:.]\d{2})/i);
+
+if(timeMatch) time=timeMatch[1].replace(".",":");
+
+const type=detectType(text);
+const place=detectPlace(text);
+
+document.getElementById("result").innerText=
 `📅 Sana: ${date}
 ⏰ Vaqt: ${time}
 📍 Joy: ${place}
@@ -289,200 +165,200 @@ ${text}`;
 }
 
 
-function control() {
+function control(){
 
-    const text =
-        document.getElementById("text").value.trim();
+const text=document.getElementById("text").value.trim();
 
-    if (!text) {
-        alert("Avval ma'lumot kiriting.");
-        return;
-    }
+if(!text){
+alert("Avval ma'lumot kiriting.");
+return;
+}
 
-    let warnings = [];
+let warnings=[];
 
-    if (!/soat\s*\d{1,2}[:.]\d{2}/i.test(text)) {
-        warnings.push("⏰ Vaqt aniq ko‘rsatilmagan.");
-    }
+if(!/soat\s*\d{1,2}[:.]\d{2}/i.test(text))
+warnings.push("⏰ Vaqt aniq ko‘rsatilmagan.");
 
-    if (
-        !text.toLowerCase().includes("ko‘cha") &&
-        !text.toLowerCase().includes("ko'cha") &&
-        !text.toLowerCase().includes("mahalla") &&
-        !text.toLowerCase().includes("bozor") &&
-        !text.toLowerCase().includes("bekat")
-    ) {
-        warnings.push("📍 Hodisa joyi aniq ko‘rsatilmagan.");
-    }
+if(detectPlace(text)==="Noma'lum joy")
+warnings.push("📍 Hodisa joyi aniq ko‘rsatilmagan.");
 
-    if (
-        !text.toLowerCase().includes("xodim") &&
-        !text.toLowerCase().includes("patrul")
-    ) {
-        warnings.push("👮 Xodimning harakati ko‘rsatilmagan.");
-    }
+if(!text.toLowerCase().includes("xodim")&&!text.toLowerCase().includes("patrul"))
+warnings.push("👮 Xodimning harakati ko‘rsatilmagan.");
 
-    if (warnings.length === 0) {
+if(warnings.length===0){
 
-        document.getElementById("result").innerHTML =
-        `<div class="success">
-        🛡️ <b>AI NAZORAT NATIJASI</b><br><br>
-        ✅ Qayd asosiy tekshiruvlardan o‘tdi.<br><br>
-        Majburiy maydonlarda aniq kamchilik topilmadi.
-        </div>`;
+document.getElementById("result").innerHTML=
+`<div class="success">
+🛡️ <b>AI NAZORAT NATIJASI</b><br><br>
+✅ Qayd asosiy tekshiruvlardan o‘tdi.<br><br>
+Majburiy maydonlarda aniq kamchilik topilmadi.
+</div>`;
 
-    } else {
+}else{
 
-        document.getElementById("result").innerHTML =
-        `<div class="alert">
-        🛡️ <b>AI NAZORAT NATIJASI</b><br><br>
-        ⚠️ Aniqlangan kamchiliklar:<br><br>
-        ${warnings.join("<br>")}
-        </div>`;
-    }
+document.getElementById("result").innerHTML=
+`<div class="alert">
+🛡️ <b>AI NAZORAT NATIJASI</b><br><br>
+⚠️ Aniqlangan kamchiliklar:<br><br>
+${warnings.join("<br>")}
+</div>`;
+}
 }
 
 
-function addReport() {
+function addReport(){
 
-    const text =
-        document.getElementById("text").value.trim();
+const text=document.getElementById("text").value.trim();
 
-    if (!text) {
-        alert("Avval voqea ma'lumotini kiriting.");
-        return;
-    }
+if(!text){
+alert("Avval voqea ma'lumotini kiriting.");
+return;
+}
 
-    let reports =
-        JSON.parse(localStorage.getItem("ppxReports") || "[]");
+let reports=JSON.parse(localStorage.getItem("ppxReports")||"[]");
 
-    reports.push({
-        text: text,
-        type: detectType(text),
-        savedAt: new Date().toLocaleString("uz-UZ")
-    });
+reports.push({
+text:text,
+type:detectType(text),
+place:detectPlace(text),
+savedAt:new Date().toLocaleString("uz-UZ")
+});
 
-    localStorage.setItem(
-        "ppxReports",
-        JSON.stringify(reports)
-    );
+localStorage.setItem("ppxReports",JSON.stringify(reports));
 
-    alert("✅ Qayd statistika bazasiga qo‘shildi.");
+alert("✅ Qayd statistika bazasiga qo‘shildi.");
 
-    showStats();
+showStats();
 }
 
 
-function showStats() {
+function showStats(){
 
-    let reports =
-        JSON.parse(localStorage.getItem("ppxReports") || "[]");
+let reports=JSON.parse(localStorage.getItem("ppxReports")||"[]");
 
-    if (reports.length === 0) {
+if(reports.length===0){
+document.getElementById("stats").innerHTML="Hozircha statistika yo‘q.";
+return;
+}
 
-        document.getElementById("stats").innerHTML =
-            "Hozircha statistika yo‘q.";
+let types={};
+let places={};
+let times={};
 
-        return;
-    }
+reports.forEach(report=>{
 
-    let types = {};
-    let times = {};
+const type=report.type||detectType(report.text);
+const place=report.place||detectPlace(report.text);
 
-    reports.forEach(report => {
+types[type]=(types[type]||0)+1;
+places[place]=(places[place]||0)+1;
 
-        const type = report.type || detectType(report.text);
+const timeMatch=report.text.match(/soat\s*(\d{1,2})[:.]\d{2}/i);
 
-        types[type] =
-            (types[type] || 0) + 1;
+if(timeMatch){
+const hour=parseInt(timeMatch[1]);
+times[hour]=(times[hour]||0)+1;
+}
 
-        const timeMatch =
-            report.text.match(/soat\s*(\d{1,2})[:.]\d{2}/i);
-
-        if (timeMatch) {
-
-            const hour =
-                parseInt(timeMatch[1]);
-
-            times[hour] =
-                (times[hour] || 0) + 1;
-        }
-    });
+});
 
 
-    let typeHTML = "";
+let typeHTML="";
 
-    Object.keys(types).forEach(type => {
-
-        typeHTML += `
-        <div class="stat">
-            <span>🚨 ${type}</span>
-            <b>${types[type]} ta</b>
-        </div>`;
-    });
-
-
-    let mostCommon = "Aniqlanmadi";
-    let maxType = 0;
-
-    Object.keys(types).forEach(type => {
-
-        if (types[type] > maxType) {
-            maxType = types[type];
-            mostCommon = type;
-        }
-    });
+Object.keys(types).forEach(type=>{
+typeHTML+=`
+<div class="stat">
+<span>🚨 ${type}</span>
+<b>${types[type]} ta</b>
+</div>`;
+});
 
 
-    let busiestHour = "Aniqlanmadi";
-    let maxHour = 0;
+let placeHTML="";
 
-    Object.keys(times).forEach(hour => {
-
-        if (times[hour] > maxHour) {
-
-            maxHour = times[hour];
-
-            busiestHour =
-                String(hour).padStart(2, "0") + ":00 atrofida";
-        }
-    });
+Object.keys(places).forEach(place=>{
+placeHTML+=`
+<div class="stat">
+<span>📍 ${place}</span>
+<b>${places[place]} ta</b>
+</div>`;
+});
 
 
-    document.getElementById("stats").innerHTML = `
+let mostCommon="Aniqlanmadi";
+let maxType=0;
 
-    <div class="big">
-        ${reports.length}
-    </div>
+Object.keys(types).forEach(type=>{
+if(types[type]>maxType){
+maxType=types[type];
+mostCommon=type;
+}
+});
 
-    <p style="text-align:center;">
-        Jami qaydlar
-    </p>
 
-    <hr>
+let mostCommonPlace="Aniqlanmadi";
+let maxPlace=0;
 
-    <h4>🚨 Hodisalar bo‘yicha taqsimot</h4>
+Object.keys(places).forEach(place=>{
+if(places[place]>maxPlace){
+maxPlace=places[place];
+mostCommonPlace=place;
+}
+});
 
-    ${typeHTML}
 
-    <h4>🏆 Eng ko‘p uchragan hodisa</h4>
+let busiestHour="Aniqlanmadi";
+let maxHour=0;
 
-    <div class="stat">
-        <span>🚨 Hodisa</span>
-        <b>${mostCommon}</b>
-    </div>
+Object.keys(times).forEach(hour=>{
+if(times[hour]>maxHour){
+maxHour=times[hour];
+busiestHour=String(hour).padStart(2,"0")+":00 atrofida";
+}
+});
 
-    <h4>⏰ Eng faol vaqt</h4>
 
-    <div class="stat">
-        <span>🕐 Vaqt</span>
-        <b>${busiestHour}</b>
-    </div>
+document.getElementById("stats").innerHTML=`
 
-    <p>
-    ⚠️ Ushbu statistika demo ma'lumotlar asosida ishlaydi.
-    </p>
-    `;
+<div class="big">${reports.length}</div>
+
+<p style="text-align:center;">
+Jami qaydlar
+</p>
+
+<hr>
+
+<h4>🚨 Hodisalar bo‘yicha taqsimot</h4>
+${typeHTML}
+
+<h4>📍 JOY BO‘YICHA TAHLIL</h4>
+${placeHTML}
+
+<h4>🏆 Eng ko‘p uchragan hodisa</h4>
+
+<div class="stat">
+<span>🚨 Hodisa</span>
+<b>${mostCommon}</b>
+</div>
+
+<h4>📍 Eng ko‘p hodisa qayd etilgan joy</h4>
+
+<div class="stat">
+<span>📍 Joy</span>
+<b>${mostCommonPlace}</b>
+</div>
+
+<h4>⏰ Eng faol vaqt</h4>
+
+<div class="stat">
+<span>🕐 Vaqt</span>
+<b>${busiestHour}</b>
+</div>
+
+<p>
+⚠️ Ushbu statistika demo ma'lumotlar asosida ishlaydi.
+</p>
+`;
 }
 
 </script>
