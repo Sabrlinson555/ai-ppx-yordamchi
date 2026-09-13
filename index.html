@@ -64,6 +64,9 @@ type="date"
 id="dateFilter"
 style="width:100%;padding:13px;margin-top:10px;box-sizing:border-box;border:1px solid #bbb;border-radius:8px;font-size:16px"
 >
+ <button onclick="showPeriodStats()">
+📈 HAFTA / OY STATISTIKASI
+ </button>
 
 <button onclick="filterByDate()">
 🔎 TANLANGAN SANA BO‘YICHA QIDIRISH
@@ -716,7 +719,125 @@ ${placeHTML}
 `;
 
 }
+function showPeriodStats(){
 
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+const now=new Date();
+
+function getReportDate(savedAt){
+
+const m=
+(savedAt||"").match(
+/(\d{1,2})[./](\d{1,2})[./](\d{4})/
+);
+
+if(!m) return null;
+
+return new Date(
+Number(m[3]),
+Number(m[2])-1,
+Number(m[1])
+);
+
+}
+
+
+/* HAFTA BOSHI — DUSHANBA */
+
+const startOfWeek=new Date(now);
+
+const day=
+(now.getDay()+6)%7;
+
+startOfWeek.setHours(0,0,0,0);
+
+startOfWeek.setDate(
+now.getDate()-day
+);
+
+
+const startOfNextWeek=
+new Date(startOfWeek);
+
+startOfNextWeek.setDate(
+startOfWeek.getDate()+7
+);
+
+
+/* OY BOSHI */
+
+const startOfMonth=
+new Date(
+now.getFullYear(),
+now.getMonth(),
+1
+);
+
+const startOfNextMonth=
+new Date(
+now.getFullYear(),
+now.getMonth()+1,
+1
+);
+
+
+let weekCount=0;
+
+let monthCount=0;
+
+
+reports.forEach(function(report){
+
+const d=
+getReportDate(report.savedAt);
+
+if(!d) return;
+
+
+if(
+d>=startOfWeek &&
+d<startOfNextWeek
+){
+weekCount++;
+}
+
+
+if(
+d>=startOfMonth &&
+d<startOfNextMonth
+){
+monthCount++;
+}
+
+});
+
+
+document.getElementById("stats").innerHTML=
+
+`
+📊 <b>DAVR BO‘YICHA STATISTIKA</b>
+
+<br><br>
+
+📅 <b>Shu hafta:</b>
+${weekCount} ta
+
+<br><br>
+
+🗓️ <b>Shu oy:</b>
+${monthCount} ta
+
+<br><br>
+
+📊 <b>Jami:</b>
+${reports.length} ta
+`;
+
+}
 
 /* MARKER BELGISI */
 
