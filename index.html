@@ -447,7 +447,7 @@ reports.push({
 text:text,
 
 type:detectType(text),
-
+risk:detectRisk(text),
 place:detectPlace(text),
 
 lat:lat,
@@ -472,6 +472,9 @@ document.getElementById("result").innerHTML=
 <br><br>
 
 📍 GPS joylashuvi saqlandi.
+<br><br>
+
+🛡️ <b>Xavflilik:</b> ${detectRisk(text)}
 
 </div>`;
 
