@@ -16,17 +16,14 @@ background:#eef2f5;
 margin:0;
 padding:20px
 }
-
 .container{
 max-width:700px;
 margin:auto
 }
-
 h1{
 text-align:center;
 color:#123b5d
 }
-
 .card{
 background:white;
 padding:18px;
@@ -34,7 +31,6 @@ margin-top:15px;
 border-radius:12px;
 box-shadow:0 2px 8px #0002
 }
-
 textarea{
 width:100%;
 height:150px;
@@ -44,7 +40,6 @@ border:1px solid #bbb;
 border-radius:8px;
 font-size:16px
 }
-
 button{
 width:100%;
 padding:13px;
@@ -55,7 +50,14 @@ background:#123b5d;
 color:white;
 font-size:16px
 }
-
+select{
+width:100%;
+padding:13px;
+margin-top:10px;
+border:1px solid #bbb;
+border-radius:8px;
+font-size:16px
+}
 .result{
 background:#f4f7f9;
 padding:12px;
@@ -63,7 +65,6 @@ border-radius:8px;
 margin-top:10px;
 white-space:pre-line
 }
-
 .stat{
 display:flex;
 justify-content:space-between;
@@ -72,28 +73,24 @@ margin-top:8px;
 background:#f1f5f8;
 border-radius:8px
 }
-
 .big{
 font-size:30px;
 font-weight:bold;
 color:#123b5d;
 text-align:center
 }
-
 .alert{
 padding:14px;
 margin-top:10px;
 border-radius:8px;
 background:#fff3cd
 }
-
 .success{
 padding:14px;
 margin-top:10px;
 border-radius:8px;
 background:#d1e7dd
 }
-
 #map{
 height:400px;
 width:100%;
@@ -165,8 +162,18 @@ Hozircha statistika yo‘q.
 
 <h3>🗺️ HAQIQIY HODISALAR XARITASI</h3>
 
+<select id="filter" onchange="showMap()">
+<option value="all">🔎 Barcha hodisalar</option>
+<option value="Janjal">🚨 Janjal</option>
+<option value="O‘g‘rilik">🔴 O‘g‘rilik</option>
+<option value="Yo‘l-transport hodisasi">🚗 YTH</option>
+<option value="Mast holat">🍺 Mast holat</option>
+<option value="Bezorilik">⚠️ Bezorilik</option>
+<option value="Boshqa hodisa">📌 Boshqa</option>
+</select>
+
 <button onclick="showMap()">
-🗺️ XARITANI OCHISH
+🗺️ XARITANI YANGILASH
 </button>
 
 <div id="map"></div>
@@ -180,9 +187,7 @@ Xaritani ochish uchun tugmani bosing.
 </div>
 
 
-<script
-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
 <script>
@@ -200,9 +205,7 @@ window.webkitSpeechRecognition;
 
 if(!SpeechRecognition){
 
-alert(
-"Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi."
-);
+alert("Brauzeringiz ovozli kiritishni qo‘llab-quvvatlamaydi.");
 
 return;
 }
@@ -319,7 +322,7 @@ return "Noma'lum joy";
 }
 
 
-/* AI TAHLIL */
+/* TAHLIL */
 
 function analyze(){
 
@@ -328,9 +331,7 @@ document.getElementById("text").value.trim();
 
 if(!text){
 
-alert(
-"Avval voqea haqida ma'lumot kiriting."
-);
+alert("Avval voqea haqida ma'lumot kiriting.");
 
 return;
 }
@@ -347,13 +348,10 @@ if(dateMatch)
 date=dateMatch[0];
 
 const timeMatch=
-text.match(
-/soat\s*(\d{1,2}[:.]\d{2})/i
-);
+text.match(/soat\s*(\d{1,2}[:.]\d{2})/i);
 
 if(timeMatch)
-time=
-timeMatch[1].replace(".",":");
+time=timeMatch[1].replace(".",":");
 
 const type=detectType(text);
 const place=detectPlace(text);
@@ -383,9 +381,7 @@ document.getElementById("text").value.trim();
 
 if(!text){
 
-alert(
-"Avval ma'lumot kiriting."
-);
+alert("Avval ma'lumot kiriting.");
 
 return;
 }
@@ -395,24 +391,18 @@ let warnings=[];
 if(
 !/soat\s*\d{1,2}[:.]\d{2}/i.test(text)
 )
-warnings.push(
-"⏰ Vaqt aniq ko‘rsatilmagan."
-);
+warnings.push("⏰ Vaqt aniq ko‘rsatilmagan.");
 
 if(
 detectPlace(text)==="Noma'lum joy"
 )
-warnings.push(
-"📍 Hodisa joyi aniq ko‘rsatilmagan."
-);
+warnings.push("📍 Hodisa joyi aniq ko‘rsatilmagan.");
 
 if(
 !text.toLowerCase().includes("xodim") &&
 !text.toLowerCase().includes("patrul")
 )
-warnings.push(
-"👮 Xodimning harakati ko‘rsatilmagan."
-);
+warnings.push("👮 Xodimning harakati ko‘rsatilmagan.");
 
 if(warnings.length===0){
 
@@ -455,7 +445,7 @@ ${warnings.join("<br>")}
 }
 
 
-/* QAYDNI GPS BILAN SAQLASH */
+/* GPS BILAN SAQLASH */
 
 function addReport(){
 
@@ -464,18 +454,14 @@ document.getElementById("text").value.trim();
 
 if(!text){
 
-alert(
-"Avval voqea ma'lumotini kiriting."
-);
+alert("Avval voqea ma'lumotini kiriting.");
 
 return;
 }
 
 if(!navigator.geolocation){
 
-alert(
-"Telefoningiz GPS funksiyasini qo‘llab-quvvatlamaydi."
-);
+alert("Telefoningiz GPS funksiyasini qo‘llab-quvvatlamaydi.");
 
 return;
 }
@@ -600,15 +586,13 @@ report.text.match(
 
 if(timeMatch){
 
-const hour=
-parseInt(timeMatch[1]);
+const hour=parseInt(timeMatch[1]);
 
 times[hour]=(times[hour]||0)+1;
 
 }
 
 });
-
 
 let typeHTML="";
 
@@ -626,7 +610,6 @@ typeHTML+=`
 
 });
 
-
 let placeHTML="";
 
 Object.keys(places).forEach(place=>{
@@ -642,55 +625,6 @@ placeHTML+=`
 </div>`;
 
 });
-
-
-let mostCommon="Aniqlanmadi";
-let maxType=0;
-
-Object.keys(types).forEach(type=>{
-
-if(types[type]>maxType){
-
-maxType=types[type];
-mostCommon=type;
-
-}
-
-});
-
-
-let mostCommonPlace="Aniqlanmadi";
-let maxPlace=0;
-
-Object.keys(places).forEach(place=>{
-
-if(places[place]>maxPlace){
-
-maxPlace=places[place];
-mostCommonPlace=place;
-
-}
-
-});
-
-
-let busiestHour="Aniqlanmadi";
-let maxHour=0;
-
-Object.keys(times).forEach(hour=>{
-
-if(times[hour]>maxHour){
-
-maxHour=times[hour];
-
-busiestHour=
-String(hour).padStart(2,"0")+
-":00 atrofida";
-
-}
-
-});
-
 
 document.getElementById("stats").innerHTML=
 
@@ -714,42 +648,12 @@ ${typeHTML}
 
 ${placeHTML}
 
-<h4>🏆 Eng ko‘p uchragan hodisa</h4>
-
-<div class="stat">
-
-<span>🚨 Hodisa</span>
-
-<b>${mostCommon}</b>
-
-</div>
-
-<h4>📍 Eng ko‘p hodisa qayd etilgan joy</h4>
-
-<div class="stat">
-
-<span>📍 Joy</span>
-
-<b>${mostCommonPlace}</b>
-
-</div>
-
-<h4>⏰ Eng faol vaqt</h4>
-
-<div class="stat">
-
-<span>🕐 Vaqt</span>
-
-<b>${busiestHour}</b>
-
-</div>
-
 `;
 
 }
 
 
-/* HAQIQIY XARITA */
+/* XARITA */
 
 function showMap(){
 
@@ -769,24 +673,44 @@ L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 {
 maxZoom:19,
-attribution:
-'© OpenStreetMap'
+attribution:"© OpenStreetMap"
 }
 ).addTo(map);
 
 }
 
+let filter=
+document.getElementById("filter").value;
+
 let gpsReports=
-reports.filter(
-report=>
-report.lat!==undefined &&
-report.lon!==undefined
-);
+reports.filter(function(report){
+
+if(
+report.lat===undefined||
+report.lon===undefined
+)
+return false;
+
+if(filter==="all")
+return true;
+
+return report.type===filter;
+
+});
+
+
+map.eachLayer(function(layer){
+
+if(layer instanceof L.Marker)
+map.removeLayer(layer);
+
+});
+
 
 if(gpsReports.length===0){
 
 document.getElementById("mapInfo").innerHTML=
-"📍 GPS koordinatali yangi qaydlar hali yo‘q.";
+"📍 Tanlangan tur bo‘yicha GPS qayd topilmadi.";
 
 setTimeout(function(){
 map.invalidateSize();
@@ -796,19 +720,27 @@ return;
 }
 
 
-map.eachLayer(function(layer){
-
-if(
-layer instanceof L.Marker
-)
-map.removeLayer(layer);
-
-});
-
-
 let bounds=[];
 
 gpsReports.forEach(function(report){
+
+let icon="📍";
+
+if(report.type==="Janjal")
+icon="🚨";
+
+if(report.type==="O‘g‘rilik")
+icon="🔴";
+
+if(report.type==="Yo‘l-transport hodisasi")
+icon="🚗";
+
+if(report.type==="Mast holat")
+icon="🍺";
+
+if(report.type==="Bezorilik")
+icon="⚠️";
+
 
 const marker=
 L.marker(
@@ -818,15 +750,16 @@ report.lon
 ]
 ).addTo(map);
 
+
 marker.bindPopup(
 
-`<b>🚨 ${report.type}</b>
-<br>
+`<b>${icon} ${report.type}</b>
+<br><br>
 📍 ${report.place}
 <br>
 🕐 ${report.savedAt}
 <br><br>
-${report.text}`
+📝 ${report.text}`
 
 );
 
@@ -849,16 +782,19 @@ bounds[0],
 
 }else{
 
-map.fitBounds(bounds,{
+map.fitBounds(
+bounds,
+{
 padding:[30,30]
-});
+}
+);
 
 }
 
 
 document.getElementById("mapInfo").innerHTML=
 
-`📍 Xaritada <b>${gpsReports.length}</b> ta GPS qayd ko‘rsatilmoqda.`;
+`📍 Xaritada <b>${gpsReports.length}</b> ta tanlangan hodisa ko‘rsatilmoqda.`;
 
 setTimeout(function(){
 
