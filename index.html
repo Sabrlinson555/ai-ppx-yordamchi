@@ -998,7 +998,7 @@ printWindow.print();
 },500);
 }
 
- function searchReports(){
+function searchReports(){
 
 const query=
 document.getElementById("searchReport").value.toLowerCase().trim();
@@ -1035,7 +1035,9 @@ return;
 let html=
 `🔍 <b>${results.length} ta qayd topildi</b><br><br>`;
 
-results.forEach(function(report,index){
+results.forEach(function(report){
+
+const index=reports.indexOf(report);
 
 html+=`
 
@@ -1048,6 +1050,10 @@ html+=`
 📝 ${report.text}
 </div>
 
+<button onclick="deleteReport(${index})">
+🗑️ O‘CHIRISH
+</button>
+
 </div>
 
 `;
@@ -1055,6 +1061,33 @@ html+=`
 });
 
 document.getElementById("stats").innerHTML=html;
+
+}
+
+
+function deleteReport(index){
+
+let reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+if(!confirm("Bu qaydni o‘chirishni xohlaysizmi?")){
+return;
+}
+
+reports.splice(index,1);
+
+localStorage.setItem(
+"ppxReports",
+JSON.stringify(reports)
+);
+
+document.getElementById("stats").innerHTML=
+"✅ Qayd o‘chirildi.";
+
+showMap();
+
 
 }
 </script>
