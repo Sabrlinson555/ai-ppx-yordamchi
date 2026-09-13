@@ -778,6 +778,126 @@ map.invalidateSize();
 },300);
 
 }
+ function showMap(){
+
+let reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+if(!map){
+
+map=L.map("map").setView(
+[41.3111,69.2797],
+11
+);
+
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+maxZoom:19,
+attribution:"© OpenStreetMap"
+}
+).addTo(map);
+
+}
+
+markers.forEach(function(marker){
+map.removeLayer(marker);
+});
+
+markers=[];
+
+const filter=
+document.getElementById("typeFilter").value;
+
+let filtered=reports.filter(function(report){
+
+if(
+report.lat===undefined||
+report.lon===undefined
+){
+return false;
+}
+
+if(filter==="Barchasi"){
+return true;
+}
+
+return report.type===filter;
+
+});
+
+let bounds=[];
+
+filtered.forEach(function(report){
+
+const marker=L.marker(
+[report.lat,report.lon],
+{
+icon:markerIcon(report.type)
+}
+).addTo(map);
+
+marker.bindPopup(`
+
+<b>🚨 ${report.type}</b>
+
+<br><br>
+
+📍 Joy: ${report.place}
+
+<br>
+
+🕐 Qayd: ${report.savedAt}
+
+<br><br>
+
+📝 ${report.text}
+
+`);
+
+markers.push(marker);
+
+bounds.push(
+[report.lat,report.lon]
+);
+
+});
+
+if(bounds.length>0){
+
+if(bounds.length===1){
+
+map.setView(
+bounds[0],
+16
+);
+
+}else{
+
+map.fitBounds(
+bounds,
+{
+padding:[30,30]
+}
+);
+
+}
+
+}
+
+document.getElementById("mapInfo").innerHTML=
+
+`📍 <b>${filtered.length}</b> ta hodisa ko‘rsatilmoqda.`;
+
+setTimeout(function(){
+
+map.invalidateSize();
+
+},300);
+
+} 
 
 </script>
 
