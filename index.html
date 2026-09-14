@@ -1059,21 +1059,73 @@ counts[Math.floor(diff/7)]++;
 
 });
 
+const max=Math.max(...counts,1);
+
 let html=`
 📈 <b>HAFTALAR BO‘YICHA GRAFIK</b>
+
 <br><br>
+
+<div style="
+display:flex;
+align-items:flex-end;
+justify-content:space-around;
+height:230px;
+padding:10px;
+border-bottom:2px solid #333;
+">
 `;
 
-["1-hafta","2-hafta","3-hafta","4-hafta"]
-.forEach(function(week,index){
+counts.forEach(function(count,index){
+
+const height=Math.max(
+10,
+(count/max)*180
+);
 
 html+=`
-<div class="stat">
-📅 ${week}: <b>${counts[index]} ta</b>
+
+<div style="
+width:20%;
+text-align:center;
+">
+
+<div style="
+height:${height}px;
+background:#1976d2;
+border-radius:6px 6px 0 0;
+color:white;
+font-weight:bold;
+padding-top:5px;
+box-sizing:border-box;
+">
+
+${count}
+
 </div>
+
+<div style="
+margin-top:8px;
+font-size:12px;
+">
+
+${index+1}-hafta
+
+</div>
+
+</div>
+
 `;
 
 });
+
+html+=`
+</div>
+
+<br>
+
+📊 <b>Jami:</b> ${reports.length} ta
+`;
 
 document.getElementById("stats").innerHTML=html;
 
