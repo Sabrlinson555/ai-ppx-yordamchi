@@ -1178,7 +1178,7 @@ function showMap(){
  // 🏘️ BUXORO MAHALLALARI
 const mahallaLayer = L.layerGroup().addTo(map);
 
-fetch("https://overpass-api.de/api/interpreter?data=[out:json];area[\"name\"=\"Buxoro\"]->.searchArea;(node[\"place\"=\"neighbourhood\"](area.searchArea);way[\"place\"=\"neighbourhood\"](area.searchArea);relation[\"place\"=\"neighbourhood\"](area.searchArea););out center;")
+fetch("https://overpass-api.de/api/interpreter?data=[out:json];(node[place=neighbourhood](39.70,64.35,39.85,64.50);way[place=neighbourhood](39.70,64.35,39.85,64.50);relation[place=neighbourhood](39.70,64.35,39.85,64.50););out center;")
 .then(response => response.json())
 .then(data => {
 
@@ -1208,10 +1208,9 @@ L.marker([lat,lon])
 })
 .catch(function(error){
 
-console.log("Mahalla ma'lumotlarini olishda xato:",error);
+console.log("Mahalla ma'lumotlarini olishda xato:", error);
 
 });
-
 let reports=
 JSON.parse(
 localStorage.getItem("ppxReports")||"[]"
@@ -1727,7 +1726,7 @@ report.savedAt.split(",")[0].trim();
 
 if(savedDate===today){
 todayCount++;
-}
+}hğğhğ 
 
 }
 
