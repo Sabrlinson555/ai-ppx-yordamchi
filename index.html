@@ -1175,9 +1175,7 @@ iconAnchor:[15,30]
 /* XARITA */
 
 function showMap(){
- 
-
-fetch("https://overpass-api.de/api/interpreter?data=[out:json];(node[place=neighbourhood](39.70,64.35,39.85,64.50);way[place=neighbourhood](39.70,64.35,39.85,64.50);relation[place=neighbourhood](39.70,64.35,39.85,64.50););out center;")
+fetch("https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];nwr[place=neighbourhood](39.70,64.35,39.85,64.50);out center;")
 .then(response => response.json())
 .then(data => {
 
@@ -1207,9 +1205,10 @@ L.marker([lat,lon])
 })
 .catch(function(error){
 
-console.log("Mahalla ma'lumotlarini olishda xato:", error);
+console.log("Mahalla ma'lumotlarini olishda xato:",error);
 
-});
+}); 
+
 let reports=
 JSON.parse(
 localStorage.getItem("ppxReports")||"[]"
