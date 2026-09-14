@@ -302,34 +302,33 @@ return "🟢 ODATIY";
 
 function detectPlace(text){
 
-    const originalText = text.trim();
+    const lowerText = text.toLowerCase();
 
-    const lowerText = originalText.toLowerCase();
-
-    // Viloyat + tuman/shahar
-    const regionDistrict = originalText.match(
-        /([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+viloyati)\s+([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+(tumani|shahri))/i
+    // Viloyat nomini topish
+    const regionMatch = text.match(
+        /([a-zA-ZА-Яа-яЁёҚқҒғҲҳЎў‘’'ʻ -]+?)\s+viloyati/i
     );
 
-    if(regionDistrict){
-        return (
-            regionDistrict[1].trim() +
-            ", " +
-            regionDistrict[2].trim()
-        );
-    }
-
-    // Viloyat + tuman
-    const district = originalText.match(
-        /([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+viloyati).*?([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+tumani)/i
+    // Tuman nomini topish
+    const districtMatch = text.match(
+        /([a-zA-ZА-Яа-яЁёҚқҒғҲҳЎў‘’'ʻ -]+?)\s+tumani/i
     );
 
-    if(district){
-        return (
-            district[1].trim() +
-            ", " +
-            district[2].trim()
-        );
+    if(regionMatch && districtMatch){
+
+        let region = regionMatch[1].trim();
+        let district = districtMatch[1].trim();
+
+        // Sana bilan bog‘liq so‘zlarni joy nomidan olib tashlash
+        region = region
+            .replace(/.*?(\b[a-zA-ZА-Яа-яЁёҚқҒғЎў‘’'ʻ-]+)$/i, "$1")
+            .trim();
+
+        district = district
+            .replace(/.*?(\b[a-zA-ZА-Яа-яЁёҚқҒғҲҳЎў‘’'ʻ-]+)$/i, "$1")
+            .trim();
+
+        return region + " viloyati, " + district + " tumani";
     }
 
     // Oddiy joy nomlari
