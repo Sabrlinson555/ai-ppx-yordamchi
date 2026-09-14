@@ -83,6 +83,9 @@ style="width:100%;padding:13px;margin-top:10px;box-sizing:border-box;border:1px 
  <button onclick="showDateStats()">
 📅 SANA BO‘YICHA STATISTIKA
  </button>
+ <button onclick="showDashboard()">
+🚨 OPERATIV DASHBOARD
+ </button>
  <button onclick="exportCSV()">
 📥 EXCEL / CSV GA CHIQARISH
 </button>
@@ -1725,7 +1728,7 @@ report.savedAt.split(",")[0].trim();
 
 if(savedDate===today){
 todayCount++;
-}hğğhğ 
+}
 
 }
 
@@ -1748,6 +1751,55 @@ document.getElementById("stats").innerHTML=
 `;
 
 }
+ function showDashboard(){
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+let high=0;
+let medium=0;
+let low=0;
+
+reports.forEach(function(report){
+
+const risk=
+report.risk || detectRisk(report.text||"");
+
+if(risk==="🔴 YUQORI XAVF") high++;
+else if(risk==="🟠 O‘RTA XAVF") medium++;
+else low++;
+
+});
+
+document.getElementById("stats").innerHTML=
+
+`
+🚨 <b>OPERATIV DASHBOARD</b>
+
+<br><br>
+
+📊 <b>Jami hodisalar:</b>
+${reports.length} ta
+
+<br><br>
+
+🔴 <b>Yuqori xavf:</b>
+${high} ta
+
+<br><br>
+
+🟠 <b>O‘rta xavf:</b>
+${medium} ta
+
+<br><br>
+
+🟢 <b>Past xavf:</b>
+${low} ta
+`;
+
+ }
  function filterByDate(){
 
 const selectedDate=
