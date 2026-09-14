@@ -302,31 +302,61 @@ return "🟢 ODATIY";
 
 function detectPlace(text){
 
-const places=[
-"markaziy ko‘cha",
-"markaziy ko'cha",
-"ko‘cha",
-"ko'cha",
-"mahalla",
-"bozor",
-"bekat",
-"maktab",
-"do‘kon",
-"do'kon",
-"park"
-];
+    const originalText = text.trim();
 
-for(let p of places){
+    const lowerText = originalText.toLowerCase();
 
-if(text.toLowerCase().includes(p))
-return p;
+    // Viloyat + tuman/shahar
+    const regionDistrict = originalText.match(
+        /([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+viloyati)\s+([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+(tumani|shahri))/i
+    );
 
+    if(regionDistrict){
+        return (
+            regionDistrict[1].trim() +
+            ", " +
+            regionDistrict[2].trim()
+        );
+    }
+
+    // Viloyat + tuman
+    const district = originalText.match(
+        /([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+viloyati).*?([A-Za-zА-Яа-яЁёҚқҒғҲҳЎўʼ‘’' -]+?\s+tumani)/i
+    );
+
+    if(district){
+        return (
+            district[1].trim() +
+            ", " +
+            district[2].trim()
+        );
+    }
+
+    // Oddiy joy nomlari
+    const places = [
+        "markaziy ko‘cha",
+        "markaziy ko'cha",
+        "ko‘cha",
+        "ko'cha",
+        "mahalla",
+        "bozor",
+        "bekat",
+        "maktab",
+        "do‘kon",
+        "do'kon",
+        "park"
+    ];
+
+    for(let p of places){
+
+        if(lowerText.includes(p)){
+            return p;
+        }
+
+    }
+
+    return "Noma'lum joy";
 }
-
-return "Noma'lum joy";
-
-}
-
 
 /* TAHLIL */
 
