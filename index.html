@@ -451,107 +451,140 @@ ${warnings.join("<br>")}
 
 function addReport(){
 
-const text=
-document.getElementById("text").value.trim();
+    const text =
+        document.getElementById("text").value.trim();
 
-if(!text){
-alert("Avval voqea ma'lumotini kiriting.");
-return;
-}
+    if(!text){
+        alert("Avval voqea ma'lumotini kiriting.");
+        return;
+    }
 
-if(!navigator.geolocation){
-alert("GPS qo‘llab-quvvatlanmaydi.");
-return;
-}
+    if(!navigator.geolocation){
+        alert("GPS qo‘llab-quvvatlanmaydi.");
+        return;
+    }
 
-document.getElementById("result").innerText=
-"📍 GPS orqali joylashuv aniqlanmoqda...";
+    document.getElementById("result").innerText =
+        "📍 GPS orqali joylashuv aniqlanmoqda...";
 
-navigator.geolocation.getCurrentPosition(
+    navigator.geolocation.getCurrentPosition(
 
-function(position){
+        function(position){
 
-const lat=position.coords.latitude;
-const lon=position.coords.longitude;
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
 
-let reports=
-JSON.parse(
-localStorage.getItem("ppxReports")||"[]"
-);
+            let reports =
+                JSON.parse(
+                    localStorage.getItem("ppxReports") || "[]"
+                );
 
-reports.push({
+            const risk = detectRisk(text);
 
-text:text,
+            reports.push({
 
-type:detectType(text),
-risk:detectRisk(text),
-place:detectPlace(text),
+                text: text,
 
-lat:lat,
+                type: detectType(text),
 
-lon:lon,
+                risk: risk,
 
-savedAt:new Date().toLocaleString("uz-UZ")
+                place: detectPlace(text),
 
-});
+                lat: lat,
 
-localStorage.setItem(
-"ppxReports",
-JSON.stringify(reports)
-);
+                lon: lon,
 
-document.getElementById("result").innerHTML=
+                savedAt: new Date().toLocaleString("uz-UZ")
 
-`<div class="success">
+            });
 
-✅ <b>Qayd saqlandi!</b>
+            localStorage.setItem(
+                "ppxReports",
+                JSON.stringify(reports)
+            );
 
-<br><br>
+            document.getElementById("result").innerHTML =
 
-📍 GPS joylashuvi saqlandi.
-<br><br>
+            `<div class="success">
 
-🛡️ <b>Xavflilik:</b> ${detectRisk(text)}
+                ✅ <b>Qayd saqlandi!</b>
 
-<br><br>
+                <br><br>
 
-💡 <b>Tavsiya:</b> ${getRecommendation(detectRisk(text))}
+                📍 GPS joylashuvi saqlandi.
 
-<br><br>
+                <br><br>
 
-🚨 <b>Prioritet:</b> ${getPriority(detectRisk(text))}
+                🛡️ <b>Xavflilik:</b> ${risk}
 
-</div>`;
+                <br><br>
 
-showMap();
+                💡 <b>Tavsiya:</b>
+                ${getRecommendation(risk)}
 
-},
+                <br><br>
 
-function(){
+                🚨 <b>Prioritet:</b>
+                ${getPriority(risk)}
 
-document.getElementById("result").innerHTML=
+                <br><br>
 
-`<div class="alert">
+                📌 <b>Koordinata:</b><br>
+                ${lat.toFixed(6)}, ${lon.toFixed(6)}
 
-❌ GPS aniqlanmadi.
+            </div>`;
 
-<br><br>
+            showMap();
 
-Telefoningizda joylashuv xizmatini yoqing.
+        },
 
-</div>`;
+        function(error){
 
-},
+            let message =
+                "GPS orqali joylashuvni aniqlab bo‘lmadi.";
 
-{
-enableHighAccuracy:true,
-timeout:10000,
-maximumAge:0
-}
+            if(error.code === 1){
+                message =
+                    "📍 GPS uchun ruxsat berilmagan.";
+            }
 
-);
+            if(error.code === 2){
+                message =
+                    "📍 Joylashuv aniqlanmadi.";
+            }
 
-}
+            if(error.code === 3){
+                message =
+                    "⏱️ GPS aniqlash vaqti tugadi.";
+            }
+
+            document.getElementById("result").innerHTML =
+
+            `<div class="error">
+
+                ❌ <b>${message}</b>
+
+                <br><br>
+
+                Brauzer sozlamalaridan
+                joylashuvga ruxsat bering.
+
+            </div>`;
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
+    );
+
+               }
+
+
 
 
 /* STATISTIKA */
