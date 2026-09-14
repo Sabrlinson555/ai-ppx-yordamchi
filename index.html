@@ -70,7 +70,10 @@ style="width:100%;padding:13px;margin-top:10px;box-sizing:border-box;border:1px 
  <button onclick="showDayStats()">
 📅 KUNLAR BO‘YICHA STATISTIKA
  </button>
-
+ 
+<button onclick="showDayChart()">
+📈 KUNLIK GRAFIK
+</button>
 <button onclick="filterByDate()">
 🔎 TANLANGAN SANA BO‘YICHA QIDIRISH
 </button>
@@ -903,6 +906,121 @@ html+=`
 document.getElementById("stats").innerHTML=html;
 
 }
+ function showDayChart(){
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+const days=[
+"Dush","Sesh","Chor",
+"Pay","Jum","Shan","Yak"
+];
+
+const counts=[
+0,0,0,0,0,0,0
+];
+
+reports.forEach(function(report){
+
+const savedAt=report.savedAt||"";
+
+const m=savedAt.match(
+/(\d{1,2})[./](\d{1,2})[./](\d{4})/
+);
+
+if(!m) return;
+
+const date=new Date(
+Number(m[3]),
+Number(m[2])-1,
+Number(m[1])
+);
+
+let day=(date.getDay()+6)%7;
+
+counts[day]++;
+
+});
+
+
+let max=Math.max(...counts,1);
+
+let html=`
+📈 <b>KUNLAR BO‘YICHA GRAFIK</b>
+
+<br><br>
+
+<div style="
+display:flex;
+align-items:flex-end;
+justify-content:space-between;
+height:220px;
+padding:10px;
+border-bottom:2px solid #333;
+">
+
+`;
+
+days.forEach(function(day,index){
+
+const height=
+Math.max(
+10,
+(counts[index]/max)*180
+);
+
+html+=`
+
+<div style="
+width:11%;
+text-align:center;
+">
+
+<div style="
+height:${height}px;
+background:#1976d2;
+border-radius:6px 6px 0 0;
+display:flex;
+align-items:flex-start;
+justify-content:center;
+color:white;
+font-weight:bold;
+padding-top:4px;
+box-sizing:border-box;
+">
+
+${counts[index]}
+
+</div>
+
+<div style="
+font-size:12px;
+margin-top:6px;
+">
+
+${day}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+html+=`
+</div>
+
+<br>
+
+📊 <b>Jami:</b> ${reports.length} ta
+`;
+
+document.getElementById("stats").innerHTML=html;
+
+ }
 
 /* MARKER BELGISI */
 
