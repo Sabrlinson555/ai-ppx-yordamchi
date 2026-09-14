@@ -1175,6 +1175,42 @@ iconAnchor:[15,30]
 /* XARITA */
 
 function showMap(){
+ // 🏘️ BUXORO MAHALLALARI
+const mahallaLayer = L.layerGroup().addTo(map);
+
+fetch("https://overpass-api.de/api/interpreter?data=[out:json];area[\"name\"=\"Buxoro\"]->.searchArea;(node[\"place\"=\"neighbourhood\"](area.searchArea);way[\"place\"=\"neighbourhood\"](area.searchArea);relation[\"place\"=\"neighbourhood\"](area.searchArea););out center;")
+.then(response => response.json())
+.then(data => {
+
+data.elements.forEach(function(item){
+
+const lat =
+item.lat ||
+(item.center && item.center.lat);
+
+const lon =
+item.lon ||
+(item.center && item.center.lon);
+
+if(!lat || !lon) return;
+
+const name =
+item.tags && item.tags.name;
+
+if(!name) return;
+
+L.marker([lat,lon])
+.bindPopup("🏘️ <b>"+name+"</b>")
+.addTo(mahallaLayer);
+
+});
+
+})
+.catch(function(error){
+
+console.log("Mahalla ma'lumotlarini olishda xato:",error);
+
+});
 
 let reports=
 JSON.parse(
