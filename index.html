@@ -74,6 +74,9 @@ style="width:100%;padding:13px;margin-top:10px;box-sizing:border-box;border:1px 
 <button onclick="showDayChart()">
 📈 KUNLIK GRAFIK
 </button>
+ <button onclick="showWeekChart()">
+📈 HAFTALIK GRAFIK
+ </button>
 <button onclick="filterByDate()">
 🔎 TANLANGAN SANA BO‘YICHA QIDIRISH
 </button>
@@ -1017,6 +1020,60 @@ html+=`
 
 📊 <b>Jami:</b> ${reports.length} ta
 `;
+
+document.getElementById("stats").innerHTML=html;
+
+ }
+ function showWeekChart(){
+
+const reports=
+JSON.parse(
+localStorage.getItem("ppxReports")||"[]"
+);
+
+const counts=[0,0,0,0];
+
+reports.forEach(function(report){
+
+const m=(report.savedAt||"").match(
+/(\d{1,2})[./](\d{1,2})[./](\d{4})/
+);
+
+if(!m) return;
+
+const date=new Date(
+Number(m[3]),
+Number(m[2])-1,
+Number(m[1])
+);
+
+const now=new Date();
+
+const diff=Math.floor(
+(now-date)/(1000*60*60*24)
+);
+
+if(diff>=0 && diff<28){
+counts[Math.floor(diff/7)]++;
+}
+
+});
+
+let html=`
+📈 <b>HAFTALAR BO‘YICHA GRAFIK</b>
+<br><br>
+`;
+
+["1-hafta","2-hafta","3-hafta","4-hafta"]
+.forEach(function(week,index){
+
+html+=`
+<div class="stat">
+📅 ${week}: <b>${counts[index]} ta</b>
+</div>
+`;
+
+});
 
 document.getElementById("stats").innerHTML=html;
 
