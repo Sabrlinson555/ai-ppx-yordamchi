@@ -1175,8 +1175,7 @@ iconAnchor:[15,30]
 /* XARITA */
 
 function showMap(){
- // 🏘️ BUXORO MAHALLALARI
-const mahallaLayer = L.layerGroup().addTo(map);
+ 
 
 fetch("https://overpass-api.de/api/interpreter?data=[out:json];(node[place=neighbourhood](39.70,64.35,39.85,64.50);way[place=neighbourhood](39.70,64.35,39.85,64.50);relation[place=neighbourhood](39.70,64.35,39.85,64.50););out center;")
 .then(response => response.json())
@@ -1331,6 +1330,7 @@ map=L.map("map").setView(
 [41.3111,69.2797],
 11
 );
+ const mahallaLayer = L.layerGroup().addTo(map);
 
 L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
